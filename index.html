@@ -62,6 +62,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .srow{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
 .srow .chip{font-size:12px;padding:4px 10px;white-space:nowrap}
 .cathead{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:var(--pri);margin-top:12px;padding:4px 0;border-bottom:2px solid var(--pri)}
+.cathead .catname{cursor:pointer;padding:2px 4px;border-radius:4px}
+.cathead .catname:hover{background:#e6f0ff}
+.cathead .catname small{font-weight:400;color:var(--sub)}
 .cathead .chip{font-size:11px;padding:2px 8px;font-weight:400}
 .badge{font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px}
 .badge.wait{background:#fff7ed;color:var(--warn)}
@@ -166,6 +169,8 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     </div>
     <div class="card">
       <h2>제품</h2>
+      <div class="row"><input id="newGroup" placeholder="새 묶음 이름 (예: RF)" style="flex:1;min-width:150px"><button class="chip on" id="addGroup" style="padding:8px 14px">묶음 추가</button></div>
+      <p class="hint">묶음 이름을 누르면 수정할 수 있습니다.</p>
       <div id="prodSet"></div>
       <div class="row" style="margin-top:12px"><input id="newCat" list="catList" placeholder="묶음 (예: PFA)" style="flex:1;min-width:110px"><input id="newProd" placeholder="제품명 추가" style="flex:2;min-width:140px"></div>
       <datalist id="catList"></datalist>
@@ -236,12 +241,12 @@ const S={get locs(){return CAT?CAT.locs:[]},get prods(){return CAT?CAT.prods:[]}
 const locName=id=>esc((S.locs.find(l=>l.id===id)||{}).name||'(삭제된 병원)');
 const prodName=id=>esc((S.prods.find(p=>p.id===id)||{}).name||'(삭제된 제품)');
 const catOf=id=>((S.prods.find(p=>p.id===id)||{}).cat)||'기타';
-const cats=()=>[...new Set(S.prods.map(p=>p.cat||'기타'))];
+const cats=()=>[...new Set([...((CAT&&CAT.cats)||[]),...S.prods.map(p=>p.cat||'기타')])];
 const pIdx=id=>S.prods.findIndex(p=>p.id===id);
 const byCat=ids=>{const c=cats();return [...ids].sort((a,b)=>c.indexOf(catOf(a))-c.indexOf(catOf(b))||pIdx(a)-pIdx(b))};
 function withCats(ids,cols,fn){let last=null;return byCat(ids).map(id=>{const c=catOf(id),h=c!==last?`<tr class="cat"><td colspan="${cols}">${esc(c)}</td></tr>`:'';last=c;return h+fn(id)}).join('')}
 function opts(list,sel){return list.map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}
-function popts(sel){return cats().map(c=>`<optgroup label="${esc(c)}">${S.prods.filter(p=>(p.cat||'기타')===c).map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}</optgroup>`).join('')}
+function popts(sel){return cats().filter(c=>S.prods.some(p=>(p.cat||'기타')===c)).map(c=>`<optgroup label="${esc(c)}">${S.prods.filter(p=>(p.cat||'기타')===c).map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}</optgroup>`).join('')}
 const newId=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 async function saveCat(next,msg){try{await API.saveCatalog(next);if(msg)toast(msg);return true}catch(e){toast(errMsg(e));return false}}
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -369,7 +374,7 @@ $('#logList').addEventListener('click',async e=>{
 /* ---------- 설정 (관리자) ---------- */
 let ED=null; // {kind:'loc'|'prod'|'cat'|'user', id}
 const useCnt=(kind,id)=>TX.filter(x=>kind==='loc'?x.loc===id:x.p===id).length;
-function editRow(kind,id,val,extra=''){return `<div class="srow">${extra}<input id="edIn" value="${esc(val)}" style="flex:1"><button class="chip on" data-sv="${kind}|${esc(id)}">저장</button><button class="chip" data-cc="1">취소</button></div>`}
+function editRow(kind,id,val,extra=''){return `<div class="srow">${extra}<input id="edIn" value="${esc(val)}" style="flex:1"><button class="chip on" data-sv="${kind}|${esc(id)}">${kind==='cat'?'완료':'저장'}</button><button class="chip" data-cc="1">취소</button></div>`}
 function itemRow(kind,x){
   if(ED&&ED.kind===kind&&ED.id===x.id)return editRow(kind,x.id,x.name,kind==='prod'?`<input id="edCat" list="catList" value="${esc(x.cat||'')}" placeholder="묶음" style="width:90px">`:'');
   return `<div class="srow"><span style="flex:1">${esc(x.name)}<small style="display:block;color:var(--sub);font-size:11px">기록 ${useCnt(kind,x.id)}줄</small></span><button class="chip" data-ed="${kind}|${x.id}">수정</button><button class="chip del" data-dl="${kind}|${x.id}">삭제</button></div>`;
@@ -384,7 +389,7 @@ function renderSet(){
     return `<div class="srow"><span style="flex:1">${esc(u.name)}${adm?'<span class="badge admin">관리자</span>':u.approved?'':'<span class="badge wait">승인 대기</span>'}<small style="display:block;color:var(--sub);font-size:11px">${esc(u.email)}</small></span>
       <button class="chip" data-ed="user|${u.uid}">이름</button>${adm?'':u.approved?`<button class="chip del" data-ua="${u.uid}|0">승인 해제</button>`:`<button class="chip on" data-ua="${u.uid}|1">승인</button><button class="chip del" data-ud="${u.uid}">거절</button>`}</div>`}).join(''):'<div class="empty">가입한 직원이 없습니다</div>';
   $('#locSet').innerHTML=S.locs.map(l=>itemRow('loc',l)).join('')||'<div class="empty">병원이 없습니다</div>';
-  $('#prodSet').innerHTML=cats().map(c=>(ED&&ED.kind==='cat'&&ED.id===c?`<div style="margin-top:12px">${editRow('cat',c,c)}</div>`:`<div class="cathead"><span>${esc(c)}</span><button class="chip" data-ed="cat|${esc(c)}">묶음 이름 수정</button></div>`)+S.prods.filter(p=>(p.cat||'기타')===c).map(p=>itemRow('prod',p)).join('')).join('')||'<div class="empty">제품이 없습니다</div>';
+  $('#prodSet').innerHTML=cats().map(c=>(ED&&ED.kind==='cat'&&ED.id===c?`<div style="margin-top:12px">${editRow('cat',c,c)}</div>`:`<div class="cathead"><span class="catname" data-ed="cat|${esc(c)}" title="눌러서 이름 수정">${esc(c)} <small>✎</small></span>${S.prods.some(p=>(p.cat||'기타')===c)?'':`<button class="chip del" data-cdel="${esc(c)}">빈 묶음 삭제</button>`}</div>`)+S.prods.filter(p=>(p.cat||'기타')===c).map(p=>itemRow('prod',p)).join('')).join('')||'<div class="empty">제품이 없습니다</div>';
   $('#catList').innerHTML=cats().map(c=>`<option value="${esc(c)}">`).join('');
   const inp=$('#edIn');if(inp&&document.activeElement!==inp&&!$('#edCat')?.matches(':focus')){inp.focus()}
 }
@@ -392,7 +397,7 @@ async function saveEdit(kind,id){
   const v=$('#edIn').value.trim();if(!v)return toast('이름을 입력하세요');
   if(kind==='user'){try{await API.updateUser(id,{name:v});ED=null;toast('수정했습니다');renderSet()}catch(e){toast(errMsg(e))}return}
   const next=clone(CAT);
-  if(kind==='cat'){if(v!==id&&cats().includes(v))return toast('같은 묶음 이름이 이미 있습니다');next.prods.forEach(p=>{if((p.cat||'기타')===id)p.cat=v})}
+  if(kind==='cat'){if(v!==id&&cats().includes(v))return toast('같은 묶음 이름이 이미 있습니다');next.prods.forEach(p=>{if((p.cat||'기타')===id)p.cat=v});next.cats=cats().map(c=>c===id?v:c)}
   else{const list=kind==='loc'?next.locs:next.prods;if(list.some(x=>x.id!==id&&x.name===v))return toast('같은 이름이 이미 있습니다');const it=list.find(x=>x.id===id);it.name=v;
     if(kind==='prod'){const c=$('#edCat').value.trim();if(!c)return toast('묶음 이름을 입력하세요');it.cat=c}}
   if(await saveCat(next,'수정했습니다')){ED=null;renderSet()}
@@ -405,6 +410,9 @@ $('#set').addEventListener('click',async e=>{
   if(ua){const[uid,v]=ua.dataset.ua.split('|');try{await API.updateUser(uid,{approved:v==='1'});toast(v==='1'?'승인했습니다':'승인을 해제했습니다')}catch(x){toast(errMsg(x))}return}
   if(ud){if(!ud.dataset.armed){ud.dataset.armed=1;ud.textContent='한 번 더';setTimeout(()=>{if(ud.isConnected){delete ud.dataset.armed;ud.textContent='거절'}},2500);return}
     try{await API.deleteUser(ud.dataset.ud);toast('가입 신청을 거절했습니다')}catch(x){toast(errMsg(x))}return}
+  const cd=e.target.closest('[data-cdel]');
+  if(cd){if(!cd.dataset.armed){cd.dataset.armed=1;cd.textContent='한 번 더';setTimeout(()=>{if(cd.isConnected){delete cd.dataset.armed;cd.textContent='빈 묶음 삭제'}},2500);return}
+    const n=clone(CAT);n.cats=cats().filter(c=>c!==cd.dataset.cdel);await saveCat(n,'묶음을 삭제했습니다');return}
   if(dl){
     const[k,id]=dl.dataset.dl.split('|'),n=useCnt(k,id);
     if(n)return toast(`기록이 ${n}줄 있어서 삭제할 수 없습니다. 이름 수정만 가능합니다`);
@@ -414,6 +422,8 @@ $('#set').addEventListener('click',async e=>{
   }
 });
 $('#set').addEventListener('keydown',e=>{if(e.target.id==='edIn'){if(e.key==='Enter'){const b=$('[data-sv]');if(b)b.click()}if(e.key==='Escape'){ED=null;renderSet()}}});
+$('#addGroup').onclick=async()=>{const v=$('#newGroup').value.trim();if(!v)return toast('묶음 이름을 입력하세요');if(cats().includes(v))return toast('같은 묶음 이름이 이미 있습니다');const n=clone(CAT);n.cats=[...cats(),v];if(await saveCat(n,'묶음을 추가했습니다')){$('#newGroup').value='';$('#newCat').value=v}};
+$('#newGroup').addEventListener('keydown',e=>{if(e.key==='Enter')$('#addGroup').click()});
 $('#addLoc').onclick=async()=>{const v=$('#newLoc').value.trim();if(!v)return;if(S.locs.some(x=>x.name===v))return toast('같은 이름이 이미 있습니다');const n=clone(CAT);n.locs.push({id:newId('h'),name:v});if(await saveCat(n,'병원을 추가했습니다'))$('#newLoc').value=''};
 $('#addProd').onclick=async()=>{const v=$('#newProd').value.trim(),c=$('#newCat').value.trim();if(!c)return toast('묶음 이름을 입력하세요');if(!v)return toast('제품명을 입력하세요');if(S.prods.some(x=>x.name===v))return toast('같은 이름이 이미 있습니다');const n=clone(CAT);n.prods.push({id:newId('p'),name:v,cat:c});if(await saveCat(n,'제품을 추가했습니다'))$('#newProd').value=''};
 
