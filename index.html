@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>아트렘 재고관리</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#1d2330;--sub:#6b7280;--line:#e5e7eb;--pri:#1f6feb;--warn:#c2410c;--red:#dc2626;--green:#16a34a}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+header{background:var(--ink);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header h1{margin:0;font-size:17px}
+header .me{font-size:12px;color:#d1d5db;text-align:right}
+header .me button{background:none;border:1px solid #4b5563;color:#e5e7eb;border-radius:6px;padding:3px 8px;font:inherit;font-size:12px;margin-left:6px}
+nav{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{flex:1;padding:12px 0;border:0;background:none;font:inherit;font-weight:500;color:var(--sub);border-bottom:3px solid transparent}
+nav button.on{color:var(--pri);border-bottom-color:var(--pri)}
+main{padding:14px;max-width:720px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.card h2{margin:0 0 10px;font-size:15px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:13px;color:var(--ink)}
+.chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.chip.del{color:var(--warn);border-color:#fdba74}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+label{display:block;font-size:12px;color:var(--sub);margin:10px 0 4px}
+.btn{width:100%;padding:12px;border:0;border-radius:8px;background:var(--pri);color:#fff;font:inherit;font-weight:700;margin-top:14px}
+.btn.ghost{background:#eef2f7;color:var(--ink)}
+.btn:disabled{opacity:.5}
+.link{background:none;border:0;color:var(--pri);font:inherit;font-size:13px;padding:8px 0;text-decoration:underline}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font-size:12px;color:var(--sub);font-weight:500}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cat td{background:#f1f5f9;font-size:12px;font-weight:700;color:var(--pri);padding:5px 6px}
+.loc{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef2f7;color:var(--ink)}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.sum div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.sum b{display:block;font-size:20px}
+.sum span{font-size:11px;color:var(--sub)}
+.sum b span.neg{font-size:inherit}
+.type{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.type button{padding:10px 0;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-weight:500;color:var(--ink)}
+.type .on.in{background:#1a7f4b;color:#fff;border-color:#1a7f4b}
+.type .on.us{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.hint{font-size:12px;color:var(--sub);margin-top:6px}
+.err{color:var(--warn);font-size:13px;margin-top:8px;min-height:18px}
+.up{color:var(--green);font-weight:700}
+.dn{color:var(--red);font-weight:700}
+.neg{color:var(--warn);font-weight:700}
+.empty{color:var(--sub);text-align:center;padding:20px 0;font-size:14px}
+.prow{display:grid;grid-template-columns:1fr 90px auto;gap:6px;align-items:center;margin-bottom:6px}
+.grp{border-bottom:1px solid var(--line);padding:10px 0}
+.grp:last-child{border-bottom:0}
+.grp .gh{display:flex;justify-content:space-between;align-items:center;font-weight:700;gap:8px}
+.grp ul{margin:6px 0 0;padding:0;list-style:none;font-size:14px}
+.grp li{display:flex;justify-content:space-between;padding:2px 0}
+.grp .memo{font-size:12px;color:var(--sub);margin-top:4px}
+.grp .by{font-size:12px;color:var(--pri);font-weight:500;margin-top:4px}
+.srow{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.srow .chip{font-size:12px;padding:4px 10px;white-space:nowrap}
+.cathead{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:var(--pri);margin-top:12px;padding:4px 0;border-bottom:2px solid var(--pri)}
+.cathead .chip{font-size:11px;padding:2px 8px;font-weight:400}
+.badge{font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px}
+.badge.wait{background:#fff7ed;color:var(--warn)}
+.badge.admin{background:#e6f0ff;color:var(--pri)}
+.center{max-width:400px;margin:40px auto;padding:0 14px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:20}
+#toast.show{opacity:1}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>아트렘 재고관리</h1>
+  <div class="me" id="meBox"></div>
+</header>
+
+<!-- 상태 화면 -->
+<div id="vLoading" class="center"><div class="card empty">불러오는 중...</div></div>
+<div id="vSetup" class="center hide"><div class="card"><h2>Firebase 설정이 필요합니다</h2><p class="hint">index.html 맨 아래 "설정" 부분의 firebaseConfig와 ADMIN_EMAILS를 채워 주세요.</p></div></div>
+<div id="vAuth" class="center hide">
+  <div class="card" id="loginBox">
+    <h2>로그인</h2>
+    <label>이메일</label><input id="liEmail" type="email" autocomplete="username">
+    <label>비밀번호</label><input id="liPw" type="password" autocomplete="current-password">
+    <div class="err" id="liErr"></div>
+    <button class="btn" id="liBtn">로그인</button>
+    <div class="row" style="justify-content:space-between"><button class="link" id="toSignup">처음이세요? 가입하기</button><button class="link" id="resetBtn">비밀번호 재설정</button></div>
+  </div>
+  <div class="card hide" id="signupBox">
+    <h2>직원 가입</h2>
+    <label>이름 (기록에 표시됩니다)</label><input id="suName" autocomplete="name">
+    <label>이메일</label><input id="suEmail" type="email" autocomplete="username">
+    <label>비밀번호 (6자 이상)</label><input id="suPw" type="password" autocomplete="new-password">
+    <div class="err" id="suErr"></div>
+    <button class="btn" id="suBtn">가입 신청</button>
+    <p class="hint">가입 후 관리자가 승인하면 사용할 수 있습니다.</p>
+    <button class="link" id="toLogin">이미 계정이 있어요. 로그인</button>
+  </div>
+</div>
+<div id="vPending" class="center hide"><div class="card"><h2>승인 대기 중</h2><p class="hint" id="pendingMsg">관리자가 승인하면 바로 사용할 수 있습니다. 이 화면은 승인되면 자동으로 바뀝니다.</p></div></div>
+<div id="vNoCatalog" class="center hide"><div class="card"><h2>준비 중</h2><p class="hint">관리자가 아직 병원·제품 목록을 만들지 않았습니다. 관리자가 한 번 로그인하면 자동으로 만들어집니다.</p></div></div>
+
+<!-- 앱 -->
+<div id="vApp" class="hide">
+<nav>
+  <button data-tab="stat" class="on">재고현황</button>
+  <button data-tab="input">입력</button>
+  <button data-tab="log">기록</button>
+  <button data-tab="set" id="setTab">설정</button>
+</nav>
+<main>
+  <section id="stat">
+    <div class="sum" id="sum"></div>
+    <div class="card">
+      <input id="q" placeholder="제품명 또는 묶음(PFA 등) 검색">
+      <div class="row" id="locFilter" style="margin-top:10px"></div>
+    </div>
+    <div id="statList"></div>
+    <div class="card"><h2>제품별 재고</h2><div id="prodTotal"></div></div>
+  </section>
+
+  <section id="input" class="hide">
+    <div class="card">
+      <h2>무엇을 기록하나요?</h2>
+      <div class="type" id="typeSel">
+        <button data-t="in" class="in on">입고</button>
+        <button data-t="us" class="us">사용</button>
+      </div>
+      <div class="row">
+        <div style="flex:1;min-width:130px"><label>병원</label><select id="hosp"></select></div>
+        <div style="flex:1;min-width:130px"><label>날짜</label><input type="date" id="date"></div>
+      </div>
+      <label>품목 · 수량</label>
+      <div id="items"></div>
+      <button class="btn ghost" id="addRow" style="margin-top:4px">+ 품목 추가</button>
+      <label>메모 (선택)</label>
+      <input id="memo" placeholder="예: 1 PFA 3D (PAF) 완료">
+      <p class="hint" id="byHint"></p>
+      <div class="err" id="err"></div>
+      <button class="btn" id="save">한 번에 저장</button>
+    </div>
+  </section>
+
+  <section id="log" class="hide">
+    <div class="type" id="logType" style="margin-bottom:12px">
+      <button data-lt="in" class="in">입고</button>
+      <button data-lt="us" class="us on">사용</button>
+    </div>
+    <div class="card"><h2 id="logTitle"></h2><div id="logList"></div></div>
+  </section>
+
+  <section id="set" class="hide">
+    <div class="card">
+      <h2>직원</h2>
+      <div id="userSet"></div>
+    </div>
+    <div class="card">
+      <h2>병원</h2>
+      <div id="locSet"></div>
+      <input id="newLoc" placeholder="병원 이름 추가" style="margin-top:10px">
+      <button class="btn ghost" id="addLoc">병원 추가</button>
+    </div>
+    <div class="card">
+      <h2>제품</h2>
+      <div id="prodSet"></div>
+      <div class="row" style="margin-top:12px"><input id="newCat" list="catList" placeholder="묶음 (예: PFA)" style="flex:1;min-width:110px"><input id="newProd" placeholder="제품명 추가" style="flex:2;min-width:140px"></div>
+      <datalist id="catList"></datalist>
+      <button class="btn ghost" id="addProd">제품 추가</button>
+    </div>
+  </section>
+</main>
+</div>
+<div id="toast"></div>
+
+<script type="module">
+/* ================= 설정 (여기만 채우면 됩니다) ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyCN9_oTXxiWDU7vDeTP_vaDPGWySaUzzt4",
+  authDomain: "atrem-64d8b.firebaseapp.com",
+  projectId: "atrem-64d8b",
+  storageBucket: "atrem-64d8b.firebasestorage.app",
+  messagingSenderId: "359220330899",
+  appId: "1:359220330899:web:4a7212a831c916fda62866"
+};
+// 관리자 이메일 (직원 승인, 병원·제품 수정 가능). firestore.rules에도 똑같이 넣어야 합니다.
+const ADMIN_EMAILS = ["atremkorea@gmail.com"];
+/* ============================================================== */
+
+const DEFAULT_CATALOG={"locs":[{"id":"h2","name":"충북대"},{"id":"h3","name":"충남대"},{"id":"h4","name":"세종충남대"},{"id":"h5","name":"천안순천향대"},{"id":"h6","name":"천안 단국대"},{"id":"h7","name":"서울성모"},{"id":"h1","name":"삼육대"},{"id":"h8","name":"대전성모"},{"id":"h9","name":"대전을지대"},{"id":"h10","name":"건양대"},{"id":"h11","name":"천안충무"},{"id":"h12","name":"대전 선"},{"id":"h13","name":"유성 선"}],
+"prods":[{"id":"p1","name":"Farawave 31mm","cat":"PFA"},{"id":"p7","name":"Farawave 35mm","cat":"PFA"},{"id":"p2","name":"Orion","cat":"PFA"},{"id":"p3","name":"MiFi","cat":"PFA"},{"id":"p4","name":"sheath","cat":"PFA"},{"id":"p5","name":"wire","cat":"PFA"},{"id":"p6","name":"Backpatch","cat":"PFA"},{"id":"p8","name":"electrodes","cat":"PFA"},
+{"id":"p100","name":"F13445HV-120R","cat":"FIX NOGAMI"},{"id":"p101","name":"11556BI-100R","cat":"SNAKE"},{"id":"p102","name":"13445HV-R","cat":"STEERABLE NOGAMI"},{"id":"p103","name":"201106BI","cat":"EP SNAKE 20극"},{"id":"p104","name":"20226BI","cat":"EP SNAKE 20극"},{"id":"p105","name":"20286BI-RACS","cat":"EP SNAKE 20극"},{"id":"p106","name":"F11556CSL-95HT","cat":"EP LUMEN"},{"id":"p107","name":"S208282B-SAOCM","cat":"EP BEEAT"},{"id":"p108","name":"5555HIS-120R","cat":"STEERABLE 10극이하"},{"id":"p109","name":"5555M-120R","cat":"STEERABLE 10극이하"},{"id":"p110","name":"F10444HV-120","cat":"FIX 10극이하"},{"id":"p111","name":"F5555RV-120R","cat":"FIX 10극이하"},{"id":"p112","name":"F8552","cat":"FIX 10극이하"},{"id":"p113","name":"3005-20","cat":"EP CABLE"},{"id":"p114","name":"3010-20","cat":"EP CABLE"},{"id":"p115","name":"3014-20","cat":"EP CABLE"},{"id":"p116","name":"3020-20S","cat":"EP CABLE"}]};
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const md=s=>{const[,m,d]=s.split('-');return `${+m}/${+d}`};
+const wd=s=>'일월화수목금토'[new Date(s+'T12:00:00').getDay()];
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1800)}
+function show(v){['vLoading','vSetup','vAuth','vPending','vNoCatalog','vApp'].forEach(x=>$('#'+x).classList.toggle('hide',x!==v))}
+const KO={'auth/invalid-credential':'이메일 또는 비밀번호가 맞지 않습니다','auth/wrong-password':'이메일 또는 비밀번호가 맞지 않습니다','auth/user-not-found':'이메일 또는 비밀번호가 맞지 않습니다','auth/invalid-email':'이메일 형식이 올바르지 않습니다','auth/email-already-in-use':'이미 가입된 이메일입니다','auth/weak-password':'비밀번호는 6자 이상이어야 합니다','auth/too-many-requests':'시도가 너무 많습니다. 잠시 후 다시 해 주세요','auth/network-request-failed':'인터넷 연결을 확인해 주세요','permission-denied':'권한이 없습니다'};
+const errMsg=e=>KO[e&&e.code]||('오류: '+((e&&(e.code||e.message))||e));
+
+/* ---------- Firebase 연결 ---------- */
+async function firebaseAPI(){
+  const V='10.14.1',B=`https://www.gstatic.com/firebasejs/${V}/`;
+  const {initializeApp}=await import(B+'firebase-app.js');
+  const A=await import(B+'firebase-auth.js');
+  const F=await import(B+'firebase-firestore.js');
+  const app=initializeApp(firebaseConfig),auth=A.getAuth(app),db=F.getFirestore(app);
+  const onErr=e=>{console.error(e);toast(errMsg(e))};
+  return {
+    onAuth:cb=>A.onAuthStateChanged(auth,u=>cb(u&&{uid:u.uid,email:u.email})),
+    signIn:(e,p)=>A.signInWithEmailAndPassword(auth,e,p),
+    signUp:async(name,e,p)=>{const c=await A.createUserWithEmailAndPassword(auth,e,p);await F.setDoc(F.doc(db,'users',c.user.uid),{name,email:e,approved:false,createdAt:F.serverTimestamp()})},
+    signOut:()=>A.signOut(auth),
+    resetPw:e=>A.sendPasswordResetEmail(auth,e),
+    watchMe:(uid,cb)=>F.onSnapshot(F.doc(db,'users',uid),s=>cb(s.exists()?s.data():null),onErr),
+    watchCatalog:cb=>F.onSnapshot(F.doc(db,'meta','catalog'),s=>cb(s.exists()?s.data():null),onErr),
+    saveCatalog:c=>F.setDoc(F.doc(db,'meta','catalog'),c),
+    watchTx:cb=>F.onSnapshot(F.collection(db,'tx'),qs=>cb(qs.docs.map(d=>{const x=d.data();return {...x,_id:d.id,atMs:x.at&&x.at.toMillis?x.at.toMillis():Date.now()}})),onErr),
+    addTx:async list=>{const b=F.writeBatch(db);list.forEach(x=>b.set(F.doc(F.collection(db,'tx')),{...x,at:F.serverTimestamp()}));await b.commit()},
+    deleteTx:async ids=>{const b=F.writeBatch(db);ids.forEach(id=>b.delete(F.doc(db,'tx',id)));await b.commit()},
+    watchUsers:cb=>F.onSnapshot(F.collection(db,'users'),qs=>cb(qs.docs.map(d=>({...d.data(),uid:d.id}))),onErr),
+    updateUser:(uid,p)=>F.updateDoc(F.doc(db,'users',uid),p),
+    deleteUser:uid=>F.deleteDoc(F.doc(db,'users',uid)),
+  };
+}
+
+/* ---------- 상태 ---------- */
+let API,ME=null,MEDOC=null,ADMIN=false,CAT=null,TX=[],USERS=[],unsub=[];
+const S={get locs(){return CAT?CAT.locs:[]},get prods(){return CAT?CAT.prods:[]}};
+const locName=id=>esc((S.locs.find(l=>l.id===id)||{}).name||'(삭제된 병원)');
+const prodName=id=>esc((S.prods.find(p=>p.id===id)||{}).name||'(삭제된 제품)');
+const catOf=id=>((S.prods.find(p=>p.id===id)||{}).cat)||'기타';
+const cats=()=>[...new Set(S.prods.map(p=>p.cat||'기타'))];
+const pIdx=id=>S.prods.findIndex(p=>p.id===id);
+const byCat=ids=>{const c=cats();return [...ids].sort((a,b)=>c.indexOf(catOf(a))-c.indexOf(catOf(b))||pIdx(a)-pIdx(b))};
+function withCats(ids,cols,fn){let last=null;return byCat(ids).map(id=>{const c=catOf(id),h=c!==last?`<tr class="cat"><td colspan="${cols}">${esc(c)}</td></tr>`:'';last=c;return h+fn(id)}).join('')}
+function opts(list,sel){return list.map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}
+function popts(sel){return cats().map(c=>`<optgroup label="${esc(c)}">${S.prods.filter(p=>(p.cat||'기타')===c).map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}</optgroup>`).join('')}
+const newId=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+async function saveCat(next,msg){try{await API.saveCatalog(next);if(msg)toast(msg);return true}catch(e){toast(errMsg(e));return false}}
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* ---------- 로그인 흐름 ---------- */
+function stopWatch(){unsub.forEach(f=>{try{f()}catch(e){}});unsub=[]}
+function renderMe(){
+  $('#meBox').innerHTML=ME?`${esc(MEDOC&&MEDOC.name||ME.email)}${ADMIN?'<span class="badge admin">관리자</span>':''}<button id="logout">로그아웃</button>`:'';
+  const b=$('#logout');if(b)b.onclick=()=>API.signOut();
+}
+function start(){
+  API.onAuth(u=>{
+    stopWatch();ME=u;MEDOC=null;CAT=null;TX=[];USERS=[];
+    ADMIN=!!u&&ADMIN_EMAILS.map(x=>x.toLowerCase()).includes((u.email||'').toLowerCase());
+    renderMe();
+    if(!u){$('#signupBox').classList.add('hide');$('#loginBox').classList.remove('hide');$('#liPw').value='';$('#suPw').value='';show('vAuth');return}
+    show('vLoading');
+    unsub.push(API.watchMe(u.uid,d=>{const first=MEDOC===null;MEDOC=d;renderMe();
+      if(!ADMIN&&!(d&&d.approved)){stopWatchData();$('#pendingMsg').textContent=d?`${d.name}님, 관리자가 승인하면 바로 사용할 수 있습니다. 승인되면 이 화면이 자동으로 바뀝니다.`:'가입 정보를 확인하는 중입니다...';show('vPending');return}
+      if(!dataOn)startData();
+    }));
+  });
+}
+let dataOn=false,dataUnsub=[];
+function stopWatchData(){dataUnsub.forEach(f=>{try{f()}catch(e){}});dataUnsub=[];dataOn=false}
+function startData(){
+  dataOn=true;
+  dataUnsub.push(API.watchCatalog(c=>{
+    if(!c){if(ADMIN){API.saveCatalog(clone(DEFAULT_CATALOG)).catch(e=>toast(errMsg(e)))}else show('vNoCatalog');return}
+    CAT=c;show('vApp');renderAll();
+  }));
+  dataUnsub.push(API.watchTx(l=>{TX=l;if(CAT)renderAll()}));
+  if(ADMIN)dataUnsub.push(API.watchUsers(l=>{USERS=l;if(CAT)renderSet()}));
+  unsub.push(stopWatchData);
+}
+
+$('#toSignup').onclick=()=>{$('#loginBox').classList.add('hide');$('#signupBox').classList.remove('hide')};
+$('#toLogin').onclick=()=>{$('#signupBox').classList.add('hide');$('#loginBox').classList.remove('hide')};
+$('#liBtn').onclick=async()=>{const e=$('#liEmail').value.trim(),p=$('#liPw').value;$('#liErr').textContent='';if(!e||!p)return $('#liErr').textContent='이메일과 비밀번호를 입력하세요';
+  $('#liBtn').disabled=true;try{await API.signIn(e,p)}catch(x){$('#liErr').textContent=errMsg(x)}$('#liBtn').disabled=false};
+$('#liPw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#liBtn').click()});
+$('#suBtn').onclick=async()=>{const n=$('#suName').value.trim(),e=$('#suEmail').value.trim(),p=$('#suPw').value;$('#suErr').textContent='';
+  if(!n)return $('#suErr').textContent='이름을 입력하세요';if(!e||!p)return $('#suErr').textContent='이메일과 비밀번호를 입력하세요';
+  $('#suBtn').disabled=true;try{await API.signUp(n,e,p)}catch(x){$('#suErr').textContent=errMsg(x)}$('#suBtn').disabled=false};
+$('#resetBtn').onclick=async()=>{const e=$('#liEmail').value.trim();if(!e)return $('#liErr').textContent='이메일 칸에 이메일을 넣고 다시 누르세요';
+  try{await API.resetPw(e);$('#liErr').textContent='비밀번호 재설정 메일을 보냈습니다'}catch(x){$('#liErr').textContent=errMsg(x)}};
+
+/* ---------- 재고현황 ---------- */
+let locF='all';
+function agg(){const u={};TX.forEach(x=>{u[x.loc]=u[x.loc]||{};const r=u[x.loc][x.p]=u[x.loc][x.p]||{in:0,us:0};r[x.t]+=x.q});return u}
+const stk=r=>r.in-r.us;
+const num=v=>v<0?`<span class="neg">${v}</span>`:v;
+function renderStat(){
+  const q=$('#q').value.trim().toLowerCase(),u=agg();
+  let tin=0,tus=0;TX.forEach(x=>{if(x.t==='in')tin+=x.q;else tus+=x.q});
+  $('#sum').innerHTML=`<div><b>${num(tin-tus)}</b><span>재고 합계</span></div><div><b class="up">+${tin}</b><span>입고 합계</span></div><div><b class="dn">-${tus}</b><span>사용 합계</span></div>`;
+  $('#locFilter').innerHTML=[{id:'all',name:'전체'},...S.locs].map(l=>`<button class="chip ${locF===l.id?'on':''}" data-l="${l.id}">${esc(l.name)}</button>`).join('');
+  let html='';
+  S.locs.filter(l=>locF==='all'?u[l.id]:l.id===locF).forEach(l=>{
+    const rows=Object.entries(u[l.id]||{}).filter(([p])=>!q||prodName(p).toLowerCase().includes(q)||catOf(p).toLowerCase().includes(q));
+    if(q&&!rows.length)return;
+    const t=rows.reduce((s,r)=>s+stk(r[1]),0);
+    html+=`<div class="card"><div class="loc"><b>${esc(l.name)}</b><span class="tag">재고 ${t}개</span></div>`+
+      (rows.length?`<table><tr><th>제품</th><th class="n">입고</th><th class="n">사용</th><th class="n">재고</th></tr>${withCats(rows.map(r=>r[0]),4,p=>{const r=u[l.id][p];return `<tr><td>${prodName(p)}</td><td class="n">${r.in?`<span class="up">+${r.in}</span>`:'-'}</td><td class="n">${r.us?`<span class="dn">-${r.us}</span>`:'-'}</td><td class="n"><b>${num(stk(r))}</b></td></tr>`})}</table>`:`<div class="empty">기록 없음</div>`)+`</div>`;
+  });
+  $('#statList').innerHTML=html||`<div class="card empty">${q?'검색 결과가 없습니다':'기록이 없습니다'}</div>`;
+  const pr=S.prods.filter(p=>TX.some(x=>x.p===p.id)),HL=S.locs.filter(l=>u[l.id]);
+  $('#prodTotal').innerHTML=pr.length?`<div style="overflow-x:auto"><table><tr><th>제품</th>${HL.map(l=>`<th class="n">${esc(l.name)}</th>`).join('')}<th class="n">합계</th></tr>${withCats(pr.map(p=>p.id),HL.length+2,pid=>{const v=HL.map(l=>{const r=(u[l.id]||{})[pid];return r?stk(r):null});return `<tr><td>${prodName(pid)}</td>${v.map(x=>`<td class="n">${x===null?'-':num(x)}</td>`).join('')}<td class="n"><b>${num(v.reduce((a,b)=>a+(b||0),0))}</b></td></tr>`})}</table></div>`:'<div class="empty">기록 없음</div>';
+}
+$('#q').addEventListener('input',renderStat);
+$('#locFilter').addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(b){locF=b.dataset.l;renderStat()}});
+
+/* ---------- 입력 ---------- */
+let R=[],T='in';
+const newRow=()=>({p:(S.prods[0]||{}).id||'',q:''});
+function renderInput(){
+  R=R.filter(r=>S.prods.some(p=>p.id===r.p)||!r.p);
+  if(!R.length)R=[newRow()];
+  document.querySelectorAll('#typeSel button').forEach(b=>b.classList.toggle('on',b.dataset.t===T));
+  $('#save').textContent=T==='in'?'입고 한 번에 저장':'사용 한 번에 저장';
+  const h=$('#hosp').value;$('#hosp').innerHTML=opts(S.locs,S.locs.some(l=>l.id===h)?h:(S.locs[0]||{}).id);
+  if(!$('#date').value)$('#date').value=today();
+  $('#byHint').textContent=`작성자: ${MEDOC&&MEDOC.name||''}`;
+  $('#items').innerHTML=R.map((r,i)=>`<div class="prow"><select data-f="p" data-i="${i}">${popts(r.p)}</select><input data-f="q" data-i="${i}" type="number" min="1" inputmode="numeric" value="${r.q}" placeholder="수량">${R.length>1?`<button class="chip" data-rm="${i}" style="font-size:12px">빼기</button>`:'<span></span>'}</div>`).join('');
+}
+$('#items').addEventListener('input',e=>{const t=e.target,i=t.dataset.i;if(i===undefined)return;R[i][t.dataset.f]=t.dataset.f==='q'?(t.value===''?'':+t.value):t.value});
+$('#items').addEventListener('change',e=>{const t=e.target;if(t.dataset.f==='p')R[t.dataset.i].p=t.value});
+$('#items').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(b){R.splice(+b.dataset.rm,1);renderInput()}});
+$('#addRow').addEventListener('click',()=>{R.push(newRow());renderInput()});
+$('#typeSel').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b){T=b.dataset.t;$('#err').textContent='';renderInput()}});
+$('#save').addEventListener('click',async()=>{
+  const err=$('#err');err.textContent='';
+  const loc=$('#hosp').value,d=$('#date').value,m=$('#memo').value.trim();
+  if(!loc)return err.textContent='병원이 없습니다. 관리자에게 병원 추가를 요청하세요';
+  if(!d)return err.textContent='날짜를 넣어 주세요';
+  for(let i=0;i<R.length;i++){if(!R[i].p)return err.textContent=`${i+1}번째 줄: 제품을 선택하세요`;if(!Number.isInteger(R[i].q)||R[i].q<1)return err.textContent=`${i+1}번째 줄: 수량을 1 이상 정수로 입력하세요`}
+  const g=ME.uid+'-'+Date.now(),name=MEDOC&&MEDOC.name||'';
+  const list=R.map((r,i)=>({g,i,t:T,loc,p:r.p,q:r.q,d,m,by:ME.uid,byName:name}));
+  $('#save').disabled=true;
+  try{await API.addTx(list);R=[newRow()];$('#memo').value='';renderInput();toast(`${locName(loc)} ${md(d)} ${T==='in'?'입고':'사용'} 저장`)}
+  catch(e2){err.textContent=errMsg(e2)}
+  $('#save').disabled=false;
+});
+
+/* ---------- 기록 ---------- */
+let LT='us';
+function renderLog(){
+  const name={in:'입고',us:'사용'},gs={},cnt={in:new Set(),us:new Set()};
+  TX.forEach(x=>{cnt[x.t].add(x.g);if(x.t===LT)(gs[x.g]=gs[x.g]||[]).push(x)});
+  document.querySelectorAll('#logType button').forEach(b=>{b.classList.toggle('on',b.dataset.lt===LT);b.textContent=`${name[b.dataset.lt]} ${cnt[b.dataset.lt].size}`});
+  const list=Object.values(gs).map(g=>g.sort((a,b)=>(a.i||0)-(b.i||0))).sort((a,b)=>b[0].d.localeCompare(a[0].d)||b[0].atMs-a[0].atMs);
+  $('#logTitle').textContent=`${name[LT]} 기록 ${list.length}건`;
+  $('#logList').innerHTML=list.length?list.map(g=>{const x=g[0],can=ADMIN||x.by===ME.uid;
+    return `<div class="grp"><div class="gh"><span>${locName(x.loc)} ${md(x.d)} (${wd(x.d)})</span>${can?`<button class="chip" data-del="${esc(x.g)}" style="font-size:11px;padding:2px 8px">삭제</button>`:''}</div>
+      <ul>${g.map(y=>`<li><span>${prodName(y.p)}</span><span class="${LT==='in'?'up':'dn'}">${LT==='in'?'+':'-'}${y.q}</span></li>`).join('')}</ul>${x.m?`<div class="memo">${esc(x.m)}</div>`:''}<div class="by">작성: ${esc(x.byName||'-')}</div></div>`}).join(''):'<div class="empty">기록이 없습니다</div>';
+}
+$('#logType').addEventListener('click',e=>{const b=e.target.closest('[data-lt]');if(b){LT=b.dataset.lt;renderLog()}});
+$('#logList').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-del]');if(!b)return;
+  if(!b.dataset.armed){b.dataset.armed=1;b.textContent='한 번 더';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='삭제'}},2500);return}
+  const ids=TX.filter(x=>x.g===b.dataset.del).map(x=>x._id);
+  try{await API.deleteTx(ids);toast('삭제했습니다')}catch(x){toast(errMsg(x))}
+});
+
+/* ---------- 설정 (관리자) ---------- */
+let ED=null; // {kind:'loc'|'prod'|'cat'|'user', id}
+const useCnt=(kind,id)=>TX.filter(x=>kind==='loc'?x.loc===id:x.p===id).length;
+function editRow(kind,id,val,extra=''){return `<div class="srow">${extra}<input id="edIn" value="${esc(val)}" style="flex:1"><button class="chip on" data-sv="${kind}|${esc(id)}">저장</button><button class="chip" data-cc="1">취소</button></div>`}
+function itemRow(kind,x){
+  if(ED&&ED.kind===kind&&ED.id===x.id)return editRow(kind,x.id,x.name,kind==='prod'?`<input id="edCat" list="catList" value="${esc(x.cat||'')}" placeholder="묶음" style="width:90px">`:'');
+  return `<div class="srow"><span style="flex:1">${esc(x.name)}<small style="display:block;color:var(--sub);font-size:11px">기록 ${useCnt(kind,x.id)}줄</small></span><button class="chip" data-ed="${kind}|${x.id}">수정</button><button class="chip del" data-dl="${kind}|${x.id}">삭제</button></div>`;
+}
+function renderSet(){
+  $('#setTab').classList.toggle('hide',!ADMIN);
+  if(!ADMIN)return;
+  const us=[...USERS].sort((a,b)=>(a.approved?1:0)-(b.approved?1:0)||String(a.name).localeCompare(String(b.name)));
+  $('#userSet').innerHTML=us.length?us.map(u=>{
+    const adm=ADMIN_EMAILS.map(x=>x.toLowerCase()).includes(String(u.email).toLowerCase());
+    if(ED&&ED.kind==='user'&&ED.id===u.uid)return editRow('user',u.uid,u.name);
+    return `<div class="srow"><span style="flex:1">${esc(u.name)}${adm?'<span class="badge admin">관리자</span>':u.approved?'':'<span class="badge wait">승인 대기</span>'}<small style="display:block;color:var(--sub);font-size:11px">${esc(u.email)}</small></span>
+      <button class="chip" data-ed="user|${u.uid}">이름</button>${adm?'':u.approved?`<button class="chip del" data-ua="${u.uid}|0">승인 해제</button>`:`<button class="chip on" data-ua="${u.uid}|1">승인</button><button class="chip del" data-ud="${u.uid}">거절</button>`}</div>`}).join(''):'<div class="empty">가입한 직원이 없습니다</div>';
+  $('#locSet').innerHTML=S.locs.map(l=>itemRow('loc',l)).join('')||'<div class="empty">병원이 없습니다</div>';
+  $('#prodSet').innerHTML=cats().map(c=>(ED&&ED.kind==='cat'&&ED.id===c?`<div style="margin-top:12px">${editRow('cat',c,c)}</div>`:`<div class="cathead"><span>${esc(c)}</span><button class="chip" data-ed="cat|${esc(c)}">묶음 이름 수정</button></div>`)+S.prods.filter(p=>(p.cat||'기타')===c).map(p=>itemRow('prod',p)).join('')).join('')||'<div class="empty">제품이 없습니다</div>';
+  $('#catList').innerHTML=cats().map(c=>`<option value="${esc(c)}">`).join('');
+  const inp=$('#edIn');if(inp&&document.activeElement!==inp&&!$('#edCat')?.matches(':focus')){inp.focus()}
+}
+async function saveEdit(kind,id){
+  const v=$('#edIn').value.trim();if(!v)return toast('이름을 입력하세요');
+  if(kind==='user'){try{await API.updateUser(id,{name:v});ED=null;toast('수정했습니다');renderSet()}catch(e){toast(errMsg(e))}return}
+  const next=clone(CAT);
+  if(kind==='cat'){if(v!==id&&cats().includes(v))return toast('같은 묶음 이름이 이미 있습니다');next.prods.forEach(p=>{if((p.cat||'기타')===id)p.cat=v})}
+  else{const list=kind==='loc'?next.locs:next.prods;if(list.some(x=>x.id!==id&&x.name===v))return toast('같은 이름이 이미 있습니다');const it=list.find(x=>x.id===id);it.name=v;
+    if(kind==='prod'){const c=$('#edCat').value.trim();if(!c)return toast('묶음 이름을 입력하세요');it.cat=c}}
+  if(await saveCat(next,'수정했습니다')){ED=null;renderSet()}
+}
+$('#set').addEventListener('click',async e=>{
+  const ed=e.target.closest('[data-ed]'),sv=e.target.closest('[data-sv]'),dl=e.target.closest('[data-dl]'),ua=e.target.closest('[data-ua]'),ud=e.target.closest('[data-ud]');
+  if(ed){const k=ed.dataset.ed.indexOf('|');ED={kind:ed.dataset.ed.slice(0,k),id:ed.dataset.ed.slice(k+1)};renderSet();return}
+  if(sv){const k=sv.dataset.sv.indexOf('|');return saveEdit(sv.dataset.sv.slice(0,k),sv.dataset.sv.slice(k+1))}
+  if(e.target.closest('[data-cc]')){ED=null;renderSet();return}
+  if(ua){const[uid,v]=ua.dataset.ua.split('|');try{await API.updateUser(uid,{approved:v==='1'});toast(v==='1'?'승인했습니다':'승인을 해제했습니다')}catch(x){toast(errMsg(x))}return}
+  if(ud){if(!ud.dataset.armed){ud.dataset.armed=1;ud.textContent='한 번 더';setTimeout(()=>{if(ud.isConnected){delete ud.dataset.armed;ud.textContent='거절'}},2500);return}
+    try{await API.deleteUser(ud.dataset.ud);toast('가입 신청을 거절했습니다')}catch(x){toast(errMsg(x))}return}
+  if(dl){
+    const[k,id]=dl.dataset.dl.split('|'),n=useCnt(k,id);
+    if(n)return toast(`기록이 ${n}줄 있어서 삭제할 수 없습니다. 이름 수정만 가능합니다`);
+    if(!dl.dataset.armed){dl.dataset.armed=1;dl.textContent='한 번 더 누르면 삭제';setTimeout(()=>{if(dl.isConnected){delete dl.dataset.armed;dl.textContent='삭제'}},3000);return}
+    const next=clone(CAT);if(k==='loc'){next.locs=next.locs.filter(x=>x.id!==id);if(locF===id)locF='all'}else next.prods=next.prods.filter(x=>x.id!==id);
+    await saveCat(next,'삭제했습니다');
+  }
+});
+$('#set').addEventListener('keydown',e=>{if(e.target.id==='edIn'){if(e.key==='Enter'){const b=$('[data-sv]');if(b)b.click()}if(e.key==='Escape'){ED=null;renderSet()}}});
+$('#addLoc').onclick=async()=>{const v=$('#newLoc').value.trim();if(!v)return;if(S.locs.some(x=>x.name===v))return toast('같은 이름이 이미 있습니다');const n=clone(CAT);n.locs.push({id:newId('h'),name:v});if(await saveCat(n,'병원을 추가했습니다'))$('#newLoc').value=''};
+$('#addProd').onclick=async()=>{const v=$('#newProd').value.trim(),c=$('#newCat').value.trim();if(!c)return toast('묶음 이름을 입력하세요');if(!v)return toast('제품명을 입력하세요');if(S.prods.some(x=>x.name===v))return toast('같은 이름이 이미 있습니다');const n=clone(CAT);n.prods.push({id:newId('p'),name:v,cat:c});if(await saveCat(n,'제품을 추가했습니다'))$('#newProd').value=''};
+
+/* ---------- 탭 ---------- */
+$('nav').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tab]');if(!b)return;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('main>section').forEach(s=>s.classList.toggle('hide',s.id!==b.dataset.tab));
+  window.scrollTo(0,0);
+});
+function renderAll(){renderStat();renderInput();renderLog();renderSet()}
+
+/* ---------- 시작 ---------- */
+(async()=>{
+  if(window.__MOCK_API__){API=window.__MOCK_API__;start();return}
+  if(!firebaseConfig.apiKey){show('vSetup');return}
+  try{API=await firebaseAPI();start()}catch(e){console.error(e);$('#vSetup .hint').textContent='Firebase에 연결하지 못했습니다: '+(e.message||e);show('vSetup')}
+})();
+</script>
+</body>
+</html>
