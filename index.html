@@ -6,84 +6,103 @@
 <title>아트렘 재고관리</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--ink:#1d2330;--sub:#6b7280;--line:#e5e7eb;--pri:#1f6feb;--warn:#c2410c;--red:#dc2626;--green:#16a34a}
-*{box-sizing:border-box}
+:root{--bg:#f4f6f8;--card:#fff;--ink:#1d2330;--sub:#6b7280;--line:#e5e7eb;--pri:#1f6feb;--ok:#1a7f4b;--warn:#c2410c;--use:#7c3aed}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
 body{margin:0;font-family:'Noto Sans KR',-apple-system,'Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
-header{background:var(--ink);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header{background:var(--ink);color:#fff;padding:14px 16px}
+header .hrow{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 header h1{margin:0;font-size:17px}
-header .me{font-size:12px;color:#d1d5db;text-align:right}
-header .me button{background:none;border:1px solid #4b5563;color:#e5e7eb;border-radius:6px;padding:3px 8px;font:inherit;font-size:12px;margin-left:6px}
+header p{margin:4px 0 0;font-size:12px;color:#b6bdc9}
+header .me{font-size:12px;color:#d1d5db;text-align:right;white-space:nowrap}
+header .me button{background:none;border:1px solid #4b5563;color:#e5e7eb;border-radius:6px;padding:3px 8px;font:inherit;font-size:12px;margin-left:6px;cursor:pointer}
+.sync{margin-top:6px;font-size:12px;color:#b6bdc9}
+.sync.ok{color:#8fe0b0}.sync.bad{color:#ffb38a}
 nav{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-nav button{flex:1;padding:12px 0;border:0;background:none;font:inherit;font-weight:500;color:var(--sub);border-bottom:3px solid transparent}
+nav button{flex:1;padding:13px 0;border:0;background:none;font:inherit;font-size:14px;font-weight:500;color:var(--sub);border-bottom:3px solid transparent;cursor:pointer}
 nav button.on{color:var(--pri);border-bottom-color:var(--pri)}
-main{padding:14px;max-width:720px;margin:0 auto}
+main{padding:14px 14px 80px;max-width:720px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
 .card h2{margin:0 0 10px;font-size:15px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
-.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:13px;color:var(--ink)}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip.sm{font-size:12px;padding:5px 11px}
 .chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
-.chip.del{color:var(--warn);border-color:#fdba74}
-input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:16px;resize:vertical}
+.prow{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px}
+.prow .g{display:grid;grid-template-columns:2fr 1fr;gap:6px;margin-top:6px}
+.prow .top{display:flex;justify-content:space-between;align-items:center;font-weight:500}
+.lots{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.lotc{position:relative}
+.lotc .ln{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--sub)}
+.lotc input{padding-left:26px}
+.sug{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+.sug .hint{width:100%;margin:0}
+input,select{width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:16px;background:#fff;color:var(--ink);min-height:44px}
+input[type=checkbox]{width:auto;min-height:0}
 label{display:block;font-size:12px;color:var(--sub);margin:10px 0 4px}
-.btn{width:100%;padding:12px;border:0;border-radius:8px;background:var(--pri);color:#fff;font:inherit;font-weight:700;margin-top:14px}
+.btn{width:100%;padding:14px;border:0;border-radius:8px;background:var(--pri);color:#fff;font:inherit;font-weight:700;margin-top:14px;cursor:pointer}
 .btn.ghost{background:#eef2f7;color:var(--ink)}
 .btn:disabled{opacity:.5}
-.link{background:none;border:0;color:var(--pri);font:inherit;font-size:13px;padding:8px 0;text-decoration:underline}
+.link{background:none;border:0;color:var(--pri);font:inherit;font-size:13px;padding:8px 0;text-decoration:underline;cursor:pointer}
 table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 th{font-size:12px;color:var(--sub);font-weight:500}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.cat td{background:#f1f5f9;font-size:12px;font-weight:700;color:var(--pri);padding:5px 6px}
-.loc{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef2f7;color:var(--ink)}
+.loc{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+.loc b{font-size:15px}
+.tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef2f7;color:var(--sub);white-space:nowrap}
+.tag.pf{background:#fff1e6;color:#c2410c}
+.tag.ep{background:#f3e8ff;color:#7c3aed}
+.ck{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink);margin:10px 14px 0 0}
+.grp{font-size:12px;font-weight:700;color:var(--sub);margin:12px 0 2px}
+.sub2{font-size:12px;color:var(--sub)}
 .sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .sum div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
 .sum b{display:block;font-size:20px}
 .sum span{font-size:11px;color:var(--sub)}
-.sum b span.neg{font-size:inherit}
 .type{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.type button{padding:10px 0;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-weight:500;color:var(--ink)}
-.type .on.in{background:#1a7f4b;color:#fff;border-color:#1a7f4b}
-.type .on.us{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.type button{padding:12px 0;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-weight:500;cursor:pointer;color:var(--ink)}
+.type button.on.in{background:var(--ok);color:#fff;border-color:var(--ok)}
+.type button.on.us{background:var(--use);color:#fff;border-color:var(--use)}
+.up{color:#16a34a;font-weight:700;font-size:12px;margin-left:6px}
+.dn{color:#dc2626;font-weight:700;font-size:12px;margin-left:6px}
 .hint{font-size:12px;color:var(--sub);margin-top:6px}
 .err{color:var(--warn);font-size:13px;margin-top:8px;min-height:18px}
-.up{color:var(--green);font-weight:700}
-.dn{color:var(--red);font-weight:700}
-.neg{color:var(--warn);font-weight:700}
+.log{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.log:last-child{border-bottom:0}
+.log small{color:var(--sub);display:block;font-size:12px}
+.log .by{color:var(--pri);font-size:12px}
+.k{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;color:#fff;margin-right:4px}
+.k.in{background:var(--ok)}.k.us{background:var(--use)}
 .empty{color:var(--sub);text-align:center;padding:20px 0;font-size:14px}
-.prow{display:grid;grid-template-columns:1fr 90px auto;gap:6px;align-items:center;margin-bottom:6px}
-.grp{border-bottom:1px solid var(--line);padding:10px 0}
-.grp:last-child{border-bottom:0}
-.grp .gh{display:flex;justify-content:space-between;align-items:center;font-weight:700;gap:8px}
-.grp ul{margin:6px 0 0;padding:0;list-style:none;font-size:14px}
-.grp li{display:flex;justify-content:space-between;padding:2px 0}
-.grp .memo{font-size:12px;color:var(--sub);margin-top:4px}
-.grp .by{font-size:12px;color:var(--pri);font-weight:500;margin-top:4px}
-.srow{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
-.srow .chip{font-size:12px;padding:4px 10px;white-space:nowrap}
-.cathead{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;color:var(--pri);margin-top:12px;padding:4px 0;border-bottom:2px solid var(--pri)}
-.cathead .catname{cursor:pointer;padding:2px 4px;border-radius:4px}
-.cathead .catname:hover{background:#e6f0ff}
-.cathead .catname small{font-weight:400;color:var(--sub)}
-.cathead .chip{font-size:11px;padding:2px 8px;font-weight:400}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.srow .l{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .badge{font-size:11px;padding:1px 6px;border-radius:4px;margin-left:4px}
 .badge.wait{background:#fff7ed;color:var(--warn)}
 .badge.admin{background:#e6f0ff;color:var(--pri)}
 .center{max-width:400px;margin:40px auto;padding:0 14px}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:20}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:9}
 #toast.show{opacity:1}
+.type button.on.cat{background:var(--pri);color:#fff;border-color:var(--pri)}
+.fx{display:grid;grid-template-columns:1fr 96px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.fx input{text-align:right}
+.fxl b{font-size:15px}
 .hide{display:none!important}
 </style>
 </head>
 <body>
 <header>
-  <h1>아트렘 재고관리</h1>
-  <div class="me" id="meBox"></div>
+  <div class="hrow">
+    <div><h1>아트렘 재고관리</h1><p>병원별 재고 · 사용량 관리 (PFA / EP 카테터)</p></div>
+    <div class="me" id="meBox"></div>
+  </div>
+  <div class="sync" id="sync"></div>
 </header>
 
-<!-- 상태 화면 -->
+<!-- 로그인 화면 -->
 <div id="vLoading" class="center"><div class="card empty">불러오는 중...</div></div>
-<div id="vSetup" class="center hide"><div class="card"><h2>Firebase 설정이 필요합니다</h2><p class="hint">index.html 맨 아래 "설정" 부분의 firebaseConfig와 ADMIN_EMAILS를 채워 주세요.</p></div></div>
+<div id="vSetup" class="center hide"><div class="card"><h2>연결 오류</h2><p class="hint" id="setupMsg"></p></div></div>
 <div id="vAuth" class="center hide">
   <div class="card" id="loginBox">
     <h2>로그인</h2>
@@ -91,7 +110,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     <label>비밀번호</label><input id="liPw" type="password" autocomplete="current-password">
     <div class="err" id="liErr"></div>
     <button class="btn" id="liBtn">로그인</button>
-    <div class="row" style="justify-content:space-between"><button class="link" id="toSignup">처음이세요? 가입하기</button><button class="link" id="resetBtn">비밀번호 재설정</button></div>
+    <div class="row" style="justify-content:space-between"><button class="link" id="toSignup">처음이세요? 가입하기</button><button class="link" id="resetPwBtn">비밀번호 재설정</button></div>
   </div>
   <div class="card hide" id="signupBox">
     <h2>직원 가입</h2>
@@ -104,77 +123,115 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     <button class="link" id="toLogin">이미 계정이 있어요. 로그인</button>
   </div>
 </div>
-<div id="vPending" class="center hide"><div class="card"><h2>승인 대기 중</h2><p class="hint" id="pendingMsg">관리자가 승인하면 바로 사용할 수 있습니다. 이 화면은 승인되면 자동으로 바뀝니다.</p></div></div>
-<div id="vNoCatalog" class="center hide"><div class="card"><h2>준비 중</h2><p class="hint">관리자가 아직 병원·제품 목록을 만들지 않았습니다. 관리자가 한 번 로그인하면 자동으로 만들어집니다.</p></div></div>
+<div id="vPending" class="center hide"><div class="card"><h2>승인 대기 중</h2><p class="hint" id="pendingMsg"></p></div></div>
 
-<!-- 앱 -->
 <div id="vApp" class="hide">
-<nav>
-  <button data-tab="stat" class="on">재고현황</button>
+<nav id="tabs">
+  <button data-tab="stock" class="on">재고</button>
   <button data-tab="input">입력</button>
+  <button data-tab="usage">사용량</button>
   <button data-tab="log">기록</button>
-  <button data-tab="set" id="setTab">설정</button>
+  <button data-tab="set">설정</button>
 </nav>
 <main>
-  <section id="stat">
+  <!-- 재고 -->
+  <section id="stock">
     <div class="sum" id="sum"></div>
     <div class="card">
-      <input id="q" placeholder="제품명 또는 묶음(PFA 등) 검색">
+      <input id="q" placeholder="제품명 검색">
       <div class="row" id="locFilter" style="margin-top:10px"></div>
+      <select id="locSel" style="margin-top:8px"></select>
     </div>
-    <div id="statList"></div>
-    <div class="card"><h2>제품별 재고</h2><div id="prodTotal"></div></div>
+    <div id="stockList"></div>
+    <div class="card">
+      <h2>제품별 전체 재고</h2>
+      <div id="prodTotal"></div>
+    </div>
   </section>
 
+  <!-- 입력 -->
   <section id="input" class="hide">
     <div class="card">
       <h2>무엇을 기록하나요?</h2>
-      <div class="type" id="typeSel">
-        <button data-t="in" class="in on">입고</button>
+      <div class="type" id="typeBtns">
+        <button data-t="in" class="in on">입고 (납품)</button>
         <button data-t="us" class="us">사용</button>
       </div>
-      <div class="row">
-        <div style="flex:1;min-width:130px"><label>병원</label><select id="hosp"></select></div>
-        <div style="flex:1;min-width:130px"><label>날짜</label><input type="date" id="date"></div>
-      </div>
-      <label>품목 · 수량</label>
+      <p class="hint" id="typeHint"></p>
+      <label>분류</label>
+      <div class="type" id="catBtns"><button data-ic="pfa" class="cat on">PFA</button><button data-ic="ep" class="cat">EP</button></div>
+      <label>병원</label>
+      <select id="loc"></select>
+      <label>날짜</label>
+      <input type="date" id="dt">
+      <label>품목</label>
       <div id="items"></div>
       <button class="btn ghost" id="addRow" style="margin-top:4px">+ 품목 추가</button>
       <label>메모 (선택)</label>
-      <input id="memo" placeholder="예: 1 PFA 3D (PAF) 완료">
+      <input id="memo" placeholder="예: PFA 케이스">
       <p class="hint" id="byHint"></p>
       <div class="err" id="err"></div>
       <button class="btn" id="save">한 번에 저장</button>
     </div>
   </section>
 
+  <!-- 사용량 -->
+  <section id="usage" class="hide">
+    <div class="card">
+      <div class="row" id="usePeriod"></div>
+      <div class="row" id="useCat" style="margin-top:8px"></div>
+    </div>
+    <div class="sum" id="useSum"></div>
+    <div id="useByLoc"></div>
+    <div class="card">
+      <h2>제품별 사용량</h2>
+      <div id="useByProd"></div>
+    </div>
+  </section>
+
+  <!-- 기록 -->
   <section id="log" class="hide">
     <div class="type" id="logType" style="margin-bottom:12px">
-      <button data-lt="in" class="in">입고</button>
-      <button data-lt="us" class="us on">사용</button>
+      <button data-lt="in" class="in on">입고</button>
+      <button data-lt="us" class="us">사용</button>
     </div>
     <div class="card"><h2 id="logTitle"></h2><div id="logList"></div></div>
   </section>
 
+  <!-- 설정 -->
   <section id="set" class="hide">
-    <div class="card">
-      <h2>직원</h2>
+    <div class="card" id="userCard">
+      <h2>직원 (관리자만 보임)</h2>
       <div id="userSet"></div>
     </div>
     <div class="card">
       <h2>병원</h2>
+      <p class="hint" style="margin-top:0">PFA·EP 버튼을 눌러 병원 구분을 켜고 끌 수 있어요 (둘 다 켜도 돼요)</p>
       <div id="locSet"></div>
       <input id="newLoc" placeholder="병원 이름 추가" style="margin-top:10px">
+      <label class="ck"><input type="checkbox" id="newPfa"> PFA 병원</label><label class="ck"><input type="checkbox" id="newEp"> EP 카테터 병원</label>
       <button class="btn ghost" id="addLoc">병원 추가</button>
     </div>
     <div class="card">
       <h2>제품</h2>
-      <div class="row"><input id="newGroup" placeholder="새 묶음 이름 (예: RF)" style="flex:1;min-width:150px"><button class="chip on" id="addGroup" style="padding:8px 14px">묶음 추가</button></div>
-      <p class="hint">묶음 이름을 누르면 수정할 수 있습니다.</p>
       <div id="prodSet"></div>
-      <div class="row" style="margin-top:12px"><input id="newCat" list="catList" placeholder="묶음 (예: PFA)" style="flex:1;min-width:110px"><input id="newProd" placeholder="제품명 추가" style="flex:2;min-width:140px"></div>
-      <datalist id="catList"></datalist>
+      <label>구분</label>
+      <select id="newCat"><option value="jc">J cath (EP 카테터)</option><option value="bs">보스턴 (PFA)</option></select>
+      <div id="grpWrap"><label>품명 (종류)</label><input id="newGrp" list="grpList" placeholder="예: EP SNAKE 20극"><datalist id="grpList"></datalist></div>
+      <label>규격 / 제품명</label>
+      <input id="newProd" placeholder="예: 201106BI">
       <button class="btn ghost" id="addProd">제품 추가</button>
+    </div>
+    <div class="card">
+      <h2>백업 / 옮기기</h2>
+      <p class="hint" style="margin-top:0">로그인한 모든 직원이 같은 데이터를 써요. 백업은 만일을 위한 복사용이에요.</p>
+      <button class="btn ghost" id="exp" style="margin-top:6px">백업 내용 만들기</button>
+      <textarea id="bk" rows="4" placeholder="여기에 백업 내용이 나타나거나, 붙여넣어서 가져오세요"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn ghost" id="cp" style="flex:1;margin:0">복사</button><button class="btn ghost adminOnly" id="imp" style="flex:1;margin:0">가져오기</button></div>
+    </div>
+    <div class="card adminOnly">
+      <h2>데이터</h2>
+      <button class="btn ghost" id="reset">처음 상태로 되돌리기</button>
     </div>
   </section>
 </main>
@@ -182,7 +239,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 <div id="toast"></div>
 
 <script type="module">
-/* ================= 설정 (여기만 채우면 됩니다) ================= */
+/* ================= 설정 ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCN9_oTXxiWDU7vDeTP_vaDPGWySaUzzt4",
   authDomain: "atrem-64d8b.firebaseapp.com",
@@ -191,98 +248,134 @@ const firebaseConfig = {
   messagingSenderId: "359220330899",
   appId: "1:359220330899:web:4a7212a831c916fda62866"
 };
-// 관리자 이메일 (직원 승인, 병원·제품 수정 가능). firestore.rules에도 똑같이 넣어야 합니다.
+// 관리자 이메일 (직원 승인·처음 상태로 되돌리기·가져오기). firestore.rules에도 똑같이 넣어야 합니다.
 const ADMIN_EMAILS = ["atremkorea@gmail.com"];
-/* ============================================================== */
+/* ======================================= */
 
-const DEFAULT_CATALOG={"locs":[{"id":"h2","name":"충북대"},{"id":"h3","name":"충남대"},{"id":"h4","name":"세종충남대"},{"id":"h5","name":"천안순천향대"},{"id":"h6","name":"천안 단국대"},{"id":"h7","name":"서울성모"},{"id":"h1","name":"삼육대"},{"id":"h8","name":"대전성모"},{"id":"h9","name":"대전을지대"},{"id":"h10","name":"건양대"},{"id":"h11","name":"천안충무"},{"id":"h12","name":"대전 선"},{"id":"h13","name":"유성 선"}],
-"prods":[{"id":"p1","name":"Farawave 31mm","cat":"PFA"},{"id":"p7","name":"Farawave 35mm","cat":"PFA"},{"id":"p2","name":"Orion","cat":"PFA"},{"id":"p3","name":"MiFi","cat":"PFA"},{"id":"p4","name":"sheath","cat":"PFA"},{"id":"p5","name":"wire","cat":"PFA"},{"id":"p6","name":"Backpatch","cat":"PFA"},{"id":"p8","name":"electrodes","cat":"PFA"},
-{"id":"p100","name":"F13445HV-120R","cat":"FIX NOGAMI"},{"id":"p101","name":"11556BI-100R","cat":"SNAKE"},{"id":"p102","name":"13445HV-R","cat":"STEERABLE NOGAMI"},{"id":"p103","name":"201106BI","cat":"EP SNAKE 20극"},{"id":"p104","name":"20226BI","cat":"EP SNAKE 20극"},{"id":"p105","name":"20286BI-RACS","cat":"EP SNAKE 20극"},{"id":"p106","name":"F11556CSL-95HT","cat":"EP LUMEN"},{"id":"p107","name":"S208282B-SAOCM","cat":"EP BEEAT"},{"id":"p108","name":"5555HIS-120R","cat":"STEERABLE 10극이하"},{"id":"p109","name":"5555M-120R","cat":"STEERABLE 10극이하"},{"id":"p110","name":"F10444HV-120","cat":"FIX 10극이하"},{"id":"p111","name":"F5555RV-120R","cat":"FIX 10극이하"},{"id":"p112","name":"F8552","cat":"FIX 10극이하"},{"id":"p113","name":"3005-20","cat":"EP CABLE"},{"id":"p114","name":"3010-20","cat":"EP CABLE"},{"id":"p115","name":"3014-20","cat":"EP CABLE"},{"id":"p116","name":"3020-20S","cat":"EP CABLE"}]};
+const KEY='atrem-inventory-v4';
+const NOTES={'EP CABLE':'매월 말 출고분 파악 후 5:5 결제'};
+const SET2=['Farawave 31mm','Farawave 35mm','Sheath','wire','electrodes'];
+const SET3=[...SET2,'Mifi','Orion','Backpatch'];
+function sample(){
+  let n=0;const P=(cat,grp,names)=>names.map(x=>({id:'p'+(++n),name:x,cat,grp}));
+  const prods=[
+    ...P('bs','',['Farawave 31mm','Farawave 35mm','Sheath','wire','Orion','Backpatch','electrodes','Mifi']),
+    ...P('jc','FIX NOGAMI',['F13445HV-120R']),
+    ...P('jc','SNAKE',['11556BI-100R']),
+    ...P('jc','STEERABLE NOGAMI',['13445HV-R']),
+    ...P('jc','EP SNAKE 20극',['201106BI','20226BI','20286BI-RACS']),
+    ...P('jc','EP LUMEN',['F11556CSL-95HT']),
+    ...P('jc','EP BEEAT',['S208282B-SAOCM']),
+    ...P('jc','STEERABLE 10극이하',['5555HIG-120R','5555M-120R']),
+    ...P('jc','FIX 10극이하',['F10444HV-120','F5555RV-120R','F8552']),
+    ...P('jc','EP CABLE',['3005-20','3010-20','3014-20','3020-20S'])
+  ];
+  const ids=names=>names.map(x=>(prods.find(p=>p.name===x&&p.cat==='bs')||{}).id).filter(Boolean);
+  const H=(id,name,pfa,ep,items)=>({id,name,kind:'hp',pfa,ep,items:items||[]});
+  return {
+    locs:[
+      H('h1','충북대',1,1,ids(SET2)),H('h2','천안순천향',1,1,ids(SET2)),H('h3','천안단국대',1,1,ids(SET3)),
+      H('h4','삼육대',1,0,ids(SET3)),H('h5','명지고양',1,0,ids(SET2)),H('h6','서울성모',1,0,ids(SET3)),
+      H('h7','대전성모',0,1),H('h8','충남대',0,1),H('h9','세종충남대',0,1),H('h10','대전을지대',0,1),
+      H('h11','건양대',0,1),H('h12','천안충무',0,1),H('h13','대전선',0,1),H('h14','유성선',0,1)],
+    prods,
+    tx:[]
+  };
+}
+const sortTx=a=>[...a].sort((x,y)=>x.at.localeCompare(y.at)||x.id-y.id);
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.locs||!S.prods||!S.tx)S=sample();
 
 const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
-const md=s=>{const[,m,d]=s.split('-');return `${+m}/${+d}`};
-const wd=s=>'일월화수목금토'[new Date(s+'T12:00:00').getDay()];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ymd=iso=>{const d=new Date(iso);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const monthOf=iso=>ymd(iso).slice(0,7);
+const todayStr=()=>ymd(new Date().toISOString());
+const curMonth=()=>todayStr().slice(0,7);
+const prevMonth=()=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`};
+const locName=id=>(S.locs.find(l=>l.id===id)||{}).name||'(삭제된 병원)';
+const prodOf=id=>S.prods.find(p=>p.id===id)||{};
+const prodName=id=>{const p=prodOf(id);return p.name?(p.grp?`${p.grp} · ${p.name}`:p.name):'(삭제된 제품)'};
+const prodIdx=id=>S.prods.findIndex(p=>p.id===id);
+const lotShow=l=>l||'미입력';
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1800)}
-function show(v){['vLoading','vSetup','vAuth','vPending','vNoCatalog','vApp'].forEach(x=>$('#'+x).classList.toggle('hide',x!==v))}
+const locTags=l=>(l.pfa?'<span class="tag pf">PFA</span>':'')+(l.ep?'<span class="tag ep">EP</span>':'');
+const LG={both:'PFA · EP 모두',pfa:'PFA 병원',ep:'EP 카테터 병원',etc:'기타'};
+const locGroup=l=>l.pfa&&l.ep?'both':l.pfa?'pfa':l.ep?'ep':'etc';
+let lastLoc='';
+function locOpts(sel,flt,label){
+  const pool=S.locs.filter(flt||(()=>true));
+  if(label)return `<optgroup label="${label}">${pool.map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}</optgroup>`;
+  return ['pfa','ep','both','etc'].map(g=>{const l=pool.filter(x=>locGroup(x)===g);
+    return l.length?`<optgroup label="${LG[g]}">${l.map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}</optgroup>`:''}).join('');
+}
+const catMatch=(l,c)=>c==='all'||(c==='pfa'?l.pfa:l.ep);
+
+/* ───── 로그인 ───── */
+let API=null,ME=null,MEDOC=null,ADMIN=false,USERS=[],started=false;
 const KO={'auth/invalid-credential':'이메일 또는 비밀번호가 맞지 않습니다','auth/wrong-password':'이메일 또는 비밀번호가 맞지 않습니다','auth/user-not-found':'이메일 또는 비밀번호가 맞지 않습니다','auth/invalid-email':'이메일 형식이 올바르지 않습니다','auth/email-already-in-use':'이미 가입된 이메일입니다','auth/weak-password':'비밀번호는 6자 이상이어야 합니다','auth/too-many-requests':'시도가 너무 많습니다. 잠시 후 다시 해 주세요','auth/network-request-failed':'인터넷 연결을 확인해 주세요','permission-denied':'권한이 없습니다'};
 const errMsg=e=>KO[e&&e.code]||('오류: '+((e&&(e.code||e.message))||e));
+const isAdminEmail=em=>ADMIN_EMAILS.map(x=>x.toLowerCase()).includes(String(em||'').toLowerCase());
+const myName=()=>(MEDOC&&MEDOC.name)||(ME&&ME.email)||'';
+function show(v){['vLoading','vSetup','vAuth','vPending','vApp'].forEach(x=>$('#'+x).classList.toggle('hide',x!==v))}
+function renderMe(){
+  $('#meBox').innerHTML=ME?`${esc(myName())}${ADMIN?'<span class="badge admin">관리자</span>':''}<button id="logout">로그아웃</button>`:'';
+  const b=$('#logout');if(b)b.onclick=()=>{API.signOut()};
+}
 
-/* ---------- Firebase 연결 ---------- */
 async function firebaseAPI(){
-  const V='10.14.1',B=`https://www.gstatic.com/firebasejs/${V}/`;
+  const B='https://www.gstatic.com/firebasejs/10.14.1/';
   const {initializeApp}=await import(B+'firebase-app.js');
   const A=await import(B+'firebase-auth.js');
   const F=await import(B+'firebase-firestore.js');
-  const app=initializeApp(firebaseConfig),auth=A.getAuth(app),db=F.getFirestore(app);
-  const onErr=e=>{console.error(e);toast(errMsg(e))};
+  const app=initializeApp(firebaseConfig),auth=A.getAuth(app),fs=F.getFirestore(app);
+  const ref=p=>F.doc(fs,...p.split('/'));
+  const meta={includeMetadataChanges:true};
   return {
     onAuth:cb=>A.onAuthStateChanged(auth,u=>cb(u&&{uid:u.uid,email:u.email})),
     signIn:(e,p)=>A.signInWithEmailAndPassword(auth,e,p),
-    signUp:async(name,e,p)=>{const c=await A.createUserWithEmailAndPassword(auth,e,p);await F.setDoc(F.doc(db,'users',c.user.uid),{name,email:e,approved:false,createdAt:F.serverTimestamp()})},
+    signUp:async(name,e,p)=>{const c=await A.createUserWithEmailAndPassword(auth,e,p);await F.setDoc(ref('users/'+c.user.uid),{name,email:e,approved:false,createdAt:F.serverTimestamp()})},
     signOut:()=>A.signOut(auth),
     resetPw:e=>A.sendPasswordResetEmail(auth,e),
-    watchMe:(uid,cb)=>F.onSnapshot(F.doc(db,'users',uid),s=>cb(s.exists()?s.data():null),onErr),
-    watchCatalog:cb=>F.onSnapshot(F.doc(db,'meta','catalog'),s=>cb(s.exists()?s.data():null),onErr),
-    saveCatalog:c=>F.setDoc(F.doc(db,'meta','catalog'),c),
-    watchTx:cb=>F.onSnapshot(F.collection(db,'tx'),qs=>cb(qs.docs.map(d=>{const x=d.data();return {...x,_id:d.id,atMs:x.at&&x.at.toMillis?x.at.toMillis():Date.now()}})),onErr),
-    addTx:async list=>{const b=F.writeBatch(db);list.forEach(x=>b.set(F.doc(F.collection(db,'tx')),{...x,at:F.serverTimestamp()}));await b.commit()},
-    deleteTx:async ids=>{const b=F.writeBatch(db);ids.forEach(id=>b.delete(F.doc(db,'tx',id)));await b.commit()},
-    watchUsers:cb=>F.onSnapshot(F.collection(db,'users'),qs=>cb(qs.docs.map(d=>({...d.data(),uid:d.id}))),onErr),
-    updateUser:(uid,p)=>F.updateDoc(F.doc(db,'users',uid),p),
-    deleteUser:uid=>F.deleteDoc(F.doc(db,'users',uid)),
+    watchMe:(uid,cb)=>F.onSnapshot(ref('users/'+uid),s=>cb(s.exists()?s.data():null),e=>{console.error(e);cb(null)}),
+    watchUsers:cb=>F.onSnapshot(F.collection(fs,'users'),qs=>cb(qs.docs.map(d=>({...d.data(),uid:d.id}))),e=>console.error(e)),
+    updateUser:(uid,p)=>F.updateDoc(ref('users/'+uid),p),
+    deleteUser:uid=>F.deleteDoc(ref('users/'+uid)),
+    db:{
+      doc:p=>({
+        set:v=>F.setDoc(ref(p),v),
+        delete:()=>F.deleteDoc(ref(p)),
+        onSnapshot:(cb,err)=>F.onSnapshot(ref(p),meta,s=>cb({exists:s.exists(),data:()=>s.data(),metadata:s.metadata}),err)
+      }),
+      collection:c=>({
+        onSnapshot:(cb,err)=>F.onSnapshot(F.collection(fs,c),meta,qs=>cb({docs:qs.docs.map(d=>({id:d.id,data:()=>d.data()})),metadata:qs.metadata}),err)
+      })
+    }
   };
 }
 
-/* ---------- 상태 ---------- */
-let API,ME=null,MEDOC=null,ADMIN=false,CAT=null,TX=[],USERS=[],unsub=[];
-const S={get locs(){return CAT?CAT.locs:[]},get prods(){return CAT?CAT.prods:[]}};
-const locName=id=>esc((S.locs.find(l=>l.id===id)||{}).name||'(삭제된 병원)');
-const prodName=id=>esc((S.prods.find(p=>p.id===id)||{}).name||'(삭제된 제품)');
-const catOf=id=>((S.prods.find(p=>p.id===id)||{}).cat)||'기타';
-const cats=()=>[...new Set([...((CAT&&CAT.cats)||[]),...S.prods.map(p=>p.cat||'기타')])];
-const pIdx=id=>S.prods.findIndex(p=>p.id===id);
-const byCat=ids=>{const c=cats();return [...ids].sort((a,b)=>c.indexOf(catOf(a))-c.indexOf(catOf(b))||pIdx(a)-pIdx(b))};
-function withCats(ids,cols,fn){let last=null;return byCat(ids).map(id=>{const c=catOf(id),h=c!==last?`<tr class="cat"><td colspan="${cols}">${esc(c)}</td></tr>`:'';last=c;return h+fn(id)}).join('')}
-function opts(list,sel){return list.map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}
-function popts(sel){return cats().filter(c=>S.prods.some(p=>(p.cat||'기타')===c)).map(c=>`<optgroup label="${esc(c)}">${S.prods.filter(p=>(p.cat||'기타')===c).map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}</optgroup>`).join('')}
-const newId=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-async function saveCat(next,msg){try{await API.saveCatalog(next);if(msg)toast(msg);return true}catch(e){toast(errMsg(e));return false}}
-const clone=o=>JSON.parse(JSON.stringify(o));
-
-/* ---------- 로그인 흐름 ---------- */
-function stopWatch(){unsub.forEach(f=>{try{f()}catch(e){}});unsub=[]}
-function renderMe(){
-  $('#meBox').innerHTML=ME?`${esc(MEDOC&&MEDOC.name||ME.email)}${ADMIN?'<span class="badge admin">관리자</span>':''}<button id="logout">로그아웃</button>`:'';
-  const b=$('#logout');if(b)b.onclick=()=>API.signOut();
-}
-function start(){
+function startAuth(){
   API.onAuth(u=>{
-    stopWatch();ME=u;MEDOC=null;CAT=null;TX=[];USERS=[];
-    ADMIN=!!u&&ADMIN_EMAILS.map(x=>x.toLowerCase()).includes((u.email||'').toLowerCase());
-    renderMe();
-    if(!u){$('#signupBox').classList.add('hide');$('#loginBox').classList.remove('hide');$('#liPw').value='';$('#suPw').value='';show('vAuth');return}
+    if(started){location.reload();return}   // 로그아웃·계정 변경 시 화면을 깨끗하게 다시 시작
+    ME=u;ADMIN=!!u&&isAdminEmail(u.email);renderMe();
+    if(!u){$('#signupBox').classList.add('hide');$('#loginBox').classList.remove('hide');show('vAuth');return}
     show('vLoading');
-    unsub.push(API.watchMe(u.uid,d=>{const first=MEDOC===null;MEDOC=d;renderMe();
-      if(!ADMIN&&!(d&&d.approved)){stopWatchData();$('#pendingMsg').textContent=d?`${d.name}님, 관리자가 승인하면 바로 사용할 수 있습니다. 승인되면 이 화면이 자동으로 바뀝니다.`:'가입 정보를 확인하는 중입니다...';show('vPending');return}
-      if(!dataOn)startData();
-    }));
+    API.watchMe(u.uid,d=>{
+      MEDOC=d;renderMe();
+      if(!ADMIN&&!(d&&d.approved)){
+        if(started){location.reload();return}
+        $('#pendingMsg').textContent=d?`${d.name}님, 관리자가 승인하면 바로 사용할 수 있습니다. 승인되면 이 화면이 자동으로 바뀝니다.`:'가입 정보를 확인하는 중입니다...';
+        show('vPending');return}
+      if(!started){started=true;show('vApp');
+        document.querySelectorAll('.adminOnly').forEach(x=>x.classList.toggle('hide',!ADMIN));
+        $('#userCard').classList.toggle('hide',!ADMIN);
+        if(ADMIN)API.watchUsers(l=>{USERS=l;renderUsers()});
+        renderAll();initSync(API.db)}
+      else renderInputBy();
+    });
   });
 }
-let dataOn=false,dataUnsub=[];
-function stopWatchData(){dataUnsub.forEach(f=>{try{f()}catch(e){}});dataUnsub=[];dataOn=false}
-function startData(){
-  dataOn=true;
-  dataUnsub.push(API.watchCatalog(c=>{
-    if(!c){if(ADMIN){API.saveCatalog(clone(DEFAULT_CATALOG)).catch(e=>toast(errMsg(e)))}else show('vNoCatalog');return}
-    CAT=c;show('vApp');renderAll();
-  }));
-  dataUnsub.push(API.watchTx(l=>{TX=l;if(CAT)renderAll()}));
-  if(ADMIN)dataUnsub.push(API.watchUsers(l=>{USERS=l;if(CAT)renderSet()}));
-  unsub.push(stopWatchData);
-}
-
 $('#toSignup').onclick=()=>{$('#loginBox').classList.add('hide');$('#signupBox').classList.remove('hide')};
 $('#toLogin').onclick=()=>{$('#signupBox').classList.add('hide');$('#loginBox').classList.remove('hide')};
 $('#liBtn').onclick=async()=>{const e=$('#liEmail').value.trim(),p=$('#liPw').value;$('#liErr').textContent='';if(!e||!p)return $('#liErr').textContent='이메일과 비밀번호를 입력하세요';
@@ -291,156 +384,344 @@ $('#liPw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#liBtn').click()
 $('#suBtn').onclick=async()=>{const n=$('#suName').value.trim(),e=$('#suEmail').value.trim(),p=$('#suPw').value;$('#suErr').textContent='';
   if(!n)return $('#suErr').textContent='이름을 입력하세요';if(!e||!p)return $('#suErr').textContent='이메일과 비밀번호를 입력하세요';
   $('#suBtn').disabled=true;try{await API.signUp(n,e,p)}catch(x){$('#suErr').textContent=errMsg(x)}$('#suBtn').disabled=false};
-$('#resetBtn').onclick=async()=>{const e=$('#liEmail').value.trim();if(!e)return $('#liErr').textContent='이메일 칸에 이메일을 넣고 다시 누르세요';
+$('#resetPwBtn').onclick=async()=>{const e=$('#liEmail').value.trim();if(!e)return $('#liErr').textContent='이메일 칸에 이메일을 넣고 다시 누르세요';
   try{await API.resetPw(e);$('#liErr').textContent='비밀번호 재설정 메일을 보냈습니다'}catch(x){$('#liErr').textContent=errMsg(x)}};
 
-/* ---------- 재고현황 ---------- */
-let locF='all';
-function agg(){const u={};TX.forEach(x=>{u[x.loc]=u[x.loc]||{};const r=u[x.loc][x.p]=u[x.loc][x.p]||{in:0,us:0};r[x.t]+=x.q});return u}
-const stk=r=>r.in-r.us;
-const num=v=>v<0?`<span class="neg">${v}</span>`:v;
-function renderStat(){
-  const q=$('#q').value.trim().toLowerCase(),u=agg();
-  let tin=0,tus=0;TX.forEach(x=>{if(x.t==='in')tin+=x.q;else tus+=x.q});
-  $('#sum').innerHTML=`<div><b>${num(tin-tus)}</b><span>재고 합계</span></div><div><b class="up">+${tin}</b><span>입고 합계</span></div><div><b class="dn">-${tus}</b><span>사용 합계</span></div>`;
-  $('#locFilter').innerHTML=[{id:'all',name:'전체'},...S.locs].map(l=>`<button class="chip ${locF===l.id?'on':''}" data-l="${l.id}">${esc(l.name)}</button>`).join('');
-  let html='';
-  S.locs.filter(l=>locF==='all'?u[l.id]:l.id===locF).forEach(l=>{
-    const rows=Object.entries(u[l.id]||{}).filter(([p])=>!q||prodName(p).toLowerCase().includes(q)||catOf(p).toLowerCase().includes(q));
-    if(q&&!rows.length)return;
-    const t=rows.reduce((s,r)=>s+stk(r[1]),0);
-    html+=`<div class="card"><div class="loc"><b>${esc(l.name)}</b><span class="tag">재고 ${t}개</span></div>`+
-      (rows.length?`<table><tr><th>제품</th><th class="n">입고</th><th class="n">사용</th><th class="n">재고</th></tr>${withCats(rows.map(r=>r[0]),4,p=>{const r=u[l.id][p];return `<tr><td>${prodName(p)}</td><td class="n">${r.in?`<span class="up">+${r.in}</span>`:'-'}</td><td class="n">${r.us?`<span class="dn">-${r.us}</span>`:'-'}</td><td class="n"><b>${num(stk(r))}</b></td></tr>`})}</table>`:`<div class="empty">기록 없음</div>`)+`</div>`;
-  });
-  $('#statList').innerHTML=html||`<div class="card empty">${q?'검색 결과가 없습니다':'기록이 없습니다'}</div>`;
-  const pr=S.prods.filter(p=>TX.some(x=>x.p===p.id)),HL=S.locs.filter(l=>u[l.id]);
-  $('#prodTotal').innerHTML=pr.length?`<div style="overflow-x:auto"><table><tr><th>제품</th>${HL.map(l=>`<th class="n">${esc(l.name)}</th>`).join('')}<th class="n">합계</th></tr>${withCats(pr.map(p=>p.id),HL.length+2,pid=>{const v=HL.map(l=>{const r=(u[l.id]||{})[pid];return r?stk(r):null});return `<tr><td>${prodName(pid)}</td>${v.map(x=>`<td class="n">${x===null?'-':num(x)}</td>`).join('')}<td class="n"><b>${num(v.reduce((a,b)=>a+(b||0),0))}</b></td></tr>`})}</table></div>`:'<div class="empty">기록 없음</div>';
+/* ───── 저장 / 동기화 (Firebase) ───── */
+let DB=null,ready=false,dirty=false,pending=0,q=Promise.resolve();
+const synced={cfg:'',tx:{}};   // tx: 기록 1건 = 문서 1개 (여러 직원이 동시에 입력해도 서로 덮어쓰지 않음)
+const DEL=new Set();           // 이 기기에서 지운 기록
+function setSync(s){
+  const el=$('#sync');
+  const m={local:['서버 연결 대기 중','bad'],loading:['서버 연결 중…',''],ok:['☁ 서버에 저장됨 · 모든 직원이 같은 데이터를 봐요','ok'],saving:['저장 중…',''],err:['⚠ 서버 저장 실패 · 이 기기에는 저장됨, 잠시 후 자동 재시도','bad'],slow:['연결이 느려요 · 이 기기 데이터를 보여주는 중','bad']}[s]||['',''];
+  el.textContent=m[0];el.className='sync '+m[1];
 }
-$('#q').addEventListener('input',renderStat);
-$('#locFilter').addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(b){locF=b.dataset.l;renderStat()}});
+function cfgJson(){return JSON.stringify({locs:S.locs,prods:S.prods})}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}push()}
+function markRemoved(newTx){const keep=new Set(newTx.map(x=>String(x.id)));Object.keys(synced.tx).forEach(id=>{if(!keep.has(id))DEL.add(id)})}
+function push(){
+  if(!DB||!ready)return;
+  const cj=cfgJson(),jobs=[];
+  if(cj!==synced.cfg)jobs.push(['cfg/main',{json:cj},()=>{synced.cfg=cj}]);
+  S.tx.forEach(x=>{const id=String(x.id),j=JSON.stringify(x);if(synced.tx[id]!==j)jobs.push(['tx/'+id,{json:j},()=>{synced.tx[id]=j}])});
+  [...DEL].forEach(id=>{if(id in synced.tx)jobs.push(['tx/'+id,null,()=>{delete synced.tx[id];DEL.delete(id)}]);else DEL.delete(id)});
+  if(!jobs.length){dirty=false;return}
+  pending++;dirty=true;setSync('saving');
+  q=q.then(async()=>{let bad=false;
+    for(const[p,v,ok]of jobs){try{if(v)await DB.doc(p).set(v);else await DB.doc(p).delete();ok()}catch(e){console.error(e);bad=true}}
+    return bad}).then(bad=>{pending--;
+      if(bad){setSync('err');setTimeout(push,15000)}
+      else if(!pending){dirty=false;setSync('ok');applyRemote()}});
+}
+function applyRemote(){
+  if(!DB||pending||dirty||!synced.cfg)return;
+  let cfg;try{cfg=JSON.parse(synced.cfg)}catch(e){return}
+  if(!cfg||!cfg.locs||!cfg.prods)return;
+  const tx=[];Object.values(synced.tx).forEach(j=>{try{tx.push(JSON.parse(j))}catch(e){}});
+  const n={locs:cfg.locs,prods:cfg.prods,tx:sortTx(tx)};
+  if(JSON.stringify(n)===JSON.stringify({locs:S.locs,prods:S.prods,tx:sortTx(S.tx)}))return;
+  S=n;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+  renderStock();renderUsage();renderLog();renderSet();
+  if(!$('#input').contains(document.activeElement))renderInput(R.some(r=>(+r.q||0)>0));
+}
+function initSync(db){
+  DB=db;ready=false;setSync('loading');
+  const timer=setTimeout(()=>{if(!ready)setSync('slow')},10000);
+  let defCfg=false,defTx=false,cfgAbsent=false,firstLocalTx=null;
+  const check=()=>{
+    if(ready||!defCfg||!defTx)return;
+    ready=true;clearTimeout(timer);setSync('ok');
+    if(cfgAbsent){S.tx=[];push()}else applyRemote();   // 서버가 비어 있으면 기본 병원·제품 목록으로 시작
+  };
+  const fail=e=>{console.error(e);clearTimeout(timer);setSync('err');toast(errMsg(e))};
+  try{
+    db.doc('cfg/main').onSnapshot(snap=>{
+      if(snap.exists){synced.cfg=(snap.data()||{}).json||''}
+      if(!snap.metadata.fromCache){defCfg=true;cfgAbsent=!snap.exists}
+      if(ready)applyRemote();else check();
+    },fail);
+    db.collection('tx').onSnapshot(snap=>{
+      synced.tx={};snap.docs.forEach(d=>{synced.tx[d.id]=(d.data()||{}).json||''});
+      if(!snap.metadata.fromCache)defTx=true;
+      if(ready)applyRemote();else check();
+    },fail);
+  }catch(e){fail(e)}
+}
 
-/* ---------- 입력 ---------- */
-let R=[],T='in';
-const newRow=()=>({p:(S.prods[0]||{}).id||'',q:''});
-function renderInput(){
-  R=R.filter(r=>S.prods.some(p=>p.id===r.p)||!r.p);
-  if(!R.length)R=[newRow()];
-  document.querySelectorAll('#typeSel button').forEach(b=>b.classList.toggle('on',b.dataset.t===T));
-  $('#save').textContent=T==='in'?'입고 한 번에 저장':'사용 한 번에 저장';
-  const h=$('#hosp').value;$('#hosp').innerHTML=opts(S.locs,S.locs.some(l=>l.id===h)?h:(S.locs[0]||{}).id);
-  if(!$('#date').value)$('#date').value=today();
-  $('#byHint').textContent=`작성자: ${MEDOC&&MEDOC.name||''}`;
-  $('#items').innerHTML=R.map((r,i)=>`<div class="prow"><select data-f="p" data-i="${i}">${popts(r.p)}</select><input data-f="q" data-i="${i}" type="number" min="1" inputmode="numeric" value="${r.q}" placeholder="수량">${R.length>1?`<button class="chip" data-rm="${i}" style="font-size:12px">빼기</button>`:'<span></span>'}</div>`).join('');
+/* ───── 재고 계산 ───── */
+function calc(){
+  const st={};
+  const add=(l,p,lot,n)=>{st[l]=st[l]||{};const k=p+'|'+lot;st[l][k]=(st[l][k]||0)+n};
+  S.tx.forEach(x=>{
+    if(x.t==='in')add(x.to,x.p,'',x.q);
+    if(x.t==='us')add(x.from,x.p,'',-x.q);
+  });
+  return st;
 }
-$('#items').addEventListener('input',e=>{const t=e.target,i=t.dataset.i;if(i===undefined)return;R[i][t.dataset.f]=t.dataset.f==='q'?(t.value===''?'':+t.value):t.value});
-$('#items').addEventListener('change',e=>{const t=e.target;if(t.dataset.f==='p')R[t.dataset.i].p=t.value});
-$('#items').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(b){R.splice(+b.dataset.rm,1);renderInput()}});
-$('#addRow').addEventListener('click',()=>{R.push(newRow());renderInput()});
-$('#typeSel').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b){T=b.dataset.t;$('#err').textContent='';renderInput()}});
-$('#save').addEventListener('click',async()=>{
+function lastChange(){
+  const lc={};
+  sortTx(S.tx).forEach(x=>{const k=x.p+'|';
+    if(x.t==='in'){lc[x.to]=lc[x.to]||{};lc[x.to][k]={d:x.q,at:x.at}}
+    if(x.t==='us'){lc[x.from]=lc[x.from]||{};lc[x.from][k]={d:-x.q,at:x.at}}});
+  return lc;
+}
+
+/* ───── 재고 화면 ───── */
+let locF='all',catF='all';
+function renderStock(){
+  const st=calc(),qs=$('#q').value.trim().toLowerCase(),LC=lastChange(),cm=curMonth();
+  let total=0,used=0,withStock=new Set();
+  S.locs.forEach(l=>Object.values(st[l.id]||{}).forEach(v=>{if(v>0){total+=v;withStock.add(l.id)}}));
+  S.tx.forEach(x=>{if(x.t==='us'&&monthOf(x.at)===cm)used+=x.q});
+  $('#sum').innerHTML=`<div><b>${total}</b><span>전체 재고</span></div><div><b>${used}</b><span>이번 달 사용</span></div><div><b>${withStock.size}</b><span>재고 있는 병원</span></div>`;
+  $('#locFilter').innerHTML=[['all','전체'],['pfa','PFA 병원'],['ep','EP 병원']].map(([id,n])=>`<button class="chip ${catF===id&&locF==='all'?'on':''}" data-c="${id}">${n}</button>`).join('');
+  const pool=S.locs.filter(l=>catMatch(l,catF));
+  if(locF!=='all'&&!pool.some(l=>l.id===locF))locF='all';
+  $('#locSel').innerHTML=`<option value="all">병원 전체 (${pool.length}곳)</option>`+pool.map(l=>`<option value="${l.id}">${esc(l.name)}</option>`).join('');
+  $('#locSel').value=locF;
+  let html='';
+  pool.filter(l=>locF==='all'||l.id===locF).forEach(l=>{
+    const today=todayStr();
+    const ids=new Set(l.items||[]);
+    Object.entries(st[l.id]||{}).forEach(([k,v])=>{if(v>0)ids.add(k.split('|')[0])});
+    Object.entries(LC[l.id]||{}).forEach(([k,c])=>{if(ymd(c.at)===today)ids.add(k.split('|')[0])});
+    const rows=[...ids].map(p=>({p,v:(st[l.id]||{})[p+'|']||0,c:(LC[l.id]||{})[p+'|']}))
+      .filter(r=>!qs||prodName(r.p).toLowerCase().includes(qs))
+      .sort((a,b)=>prodIdx(a.p)-prodIdx(b.p));
+    if(!rows.length&&(qs||locF==='all'))return;
+    const tot=rows.reduce((s,r)=>s+r.v,0);
+    const mu=S.tx.filter(x=>x.t==='us'&&x.from===l.id&&monthOf(x.at)===cm).reduce((s,x)=>s+x.q,0);
+    html+=`<div class="card"><div class="loc"><span><b>${esc(l.name)}</b> ${locTags(l)}</span><span class="tag">재고 ${tot} · 이번 달 사용 ${mu}</span></div>`+
+      (rows.length?`<table><tr><th>제품</th><th class="n">재고</th></tr>${rows.map(r=>{const p=prodOf(r.p);return `<tr><td>${esc(p.name||'(삭제된 제품)')}${p.grp?`<div class="sub2">${esc(p.grp)}</div>`:''}</td><td class="n"${r.v?'':' style="color:var(--sub)"'}>${r.v}${r.c?(r.c.d>0?`<span class="up">+${r.c.d}</span>`:`<span class="dn">-${-r.c.d}</span>`):''}</td></tr>`}).join('')}</table>`:`<div class="empty">재고 없음</div>`)+`</div>`;
+  });
+  $('#stockList').innerHTML=html||`<div class="card empty">${qs?'검색 결과가 없습니다':'재고가 있는 병원이 없어요 · 입력 탭에서 입고를 기록하세요'}</div>`;
+  const pt={};
+  S.locs.forEach(l=>Object.entries(st[l.id]||{}).forEach(([k,v])=>{if(v>0){const p=k.split('|')[0];pt[p]=(pt[p]||0)+v}}));
+  const pr=S.prods.filter(p=>pt[p.id]);
+  $('#prodTotal').innerHTML=pr.length?`<table><tr><th>제품</th><th class="n">재고 합계</th></tr>${pr.map(p=>`<tr><td>${esc(p.name)}${p.grp?`<div class="sub2">${esc(p.grp)}</div>`:''}</td><td class="n"><b>${pt[p.id]}</b></td></tr>`).join('')}</table>`:'<div class="empty">재고 없음</div>';
+}
+$('#q').addEventListener('input',renderStock);
+$('#locFilter').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b){catF=b.dataset.c;locF='all';renderStock()}});
+$('#locSel').addEventListener('change',e=>{locF=e.target.value;renderStock()});
+
+/* ───── 입력 ───── */
+let T='in',R=[],IC='pfa';
+const catOf=()=>IC==='ep'?'jc':'bs';
+const locFlt=l=>IC==='ep'?l.ep:l.pfa;
+const newRow=()=>({p:(S.prods.find(p=>p.cat===catOf())||S.prods[0]||{}).id||'',q:'',fixed:false});
+const hints={in:'병원을 고르면 품목이 쭉 나와요 · 들어온 수량만 입력하세요',us:'병원을 고르면 품목이 쭉 나와요 · 사용한 수량만 입력하세요 (재고에서 차감)'};
+function opts(list,sel){return list.map(x=>`<option value="${x.id}" ${x.id===sel?'selected':''}>${esc(x.name)}</option>`).join('')}
+const pGroup=p=>p.cat==='bs'?'보스턴 PFA':'J cath · '+(p.grp||'기타');
+function prodOpts(sel,cat){
+  const list=S.prods.filter(p=>!cat||p.cat===cat);
+  const seen=[];list.forEach(p=>{const g=pGroup(p);if(!seen.includes(g))seen.push(g)});
+  return seen.map(g=>`<optgroup label="${esc(g)}">${opts(list.filter(p=>pGroup(p)===g),sel)}</optgroup>`).join('');
+}
+function loadRows(){
+  if(IC==='ep'){R=S.prods.filter(p=>p.cat==='jc').map(p=>({p:p.id,q:'',fixed:true}));if(!R.length)R=[newRow()];return}
+  const l=S.locs.find(x=>x.id===$('#loc').value);
+  const its=((l&&l.items)||[]).filter(id=>{const x=S.prods.find(y=>y.id===id);return x&&x.cat==='bs'}).sort((a,b)=>prodIdx(a)-prodIdx(b));
+  R=its.length?its.map(p=>({p,q:'',fixed:true})):[newRow()];
+}
+function renderInputBy(){$('#byHint').textContent=`작성자: ${myName()}`}
+function renderInput(keep){
+  document.querySelectorAll('#typeBtns button').forEach(b=>b.classList.toggle('on',b.dataset.t===T));
+  document.querySelectorAll('#catBtns button').forEach(b=>b.classList.toggle('on',b.dataset.ic===IC));
+  $('#typeHint').textContent=hints[T];
+  renderInputBy();
+  const cur=$('#loc').value||lastLoc;
+  $('#loc').innerHTML=locOpts(cur,locFlt,IC==='ep'?'EP':'PFA');
+  if([...$('#loc').options].some(o=>o.value===cur))$('#loc').value=cur;
+  $('#addRow').classList.toggle('hide',IC==='ep');
+  if(!$('#dt').value)$('#dt').value=todayStr();
+  if(!keep||!R.length)loadRows();
+  R.forEach(r=>{if(!S.prods.some(p=>p.id===r.p))r.p=(S.prods[0]||{}).id||''});
+  drawItems();
+}
+function drawItems(){
+  const st=calc()[$('#loc').value]||{};let lastG=null;
+  $('#items').innerHTML=R.map((r,i)=>{
+    const p=prodOf(r.p),have=st[r.p+'|']||0;
+    if(r.fixed){
+      let hd='';
+      if(IC==='ep'&&p.grp!==lastG){lastG=p.grp;hd=`<div class="grp">${esc(p.grp||'기타')}${NOTES[p.grp]?` <span style="font-weight:400">· ${esc(NOTES[p.grp])}</span>`:''}</div>`}
+      return hd+`<div class="fx"><div class="fxl"><b>${esc(p.name||'(삭제된 제품)')}</b><div class="sub2">${IC==='ep'?'':'보스턴 PFA · '}현재 ${have}개</div></div><input data-f="q" data-i="${i}" type="number" min="0" inputmode="numeric" value="${r.q}" placeholder="0"></div>`;
+    }
+    const note=NOTES[p.grp];
+    return `<div class="prow"><div class="top"><span>추가 품목</span><button class="chip sm" data-rm="${i}">빼기</button></div><select data-f="p" data-i="${i}" style="margin-top:6px">${prodOpts(r.p,catOf())}</select>${note?`<p class="hint">💡 ${esc(note)}</p>`:''}<label style="margin-top:8px">수량</label><input data-f="q" data-i="${i}" type="number" min="0" inputmode="numeric" value="${r.q}" placeholder="수량"><p class="hint">현재 재고: ${have}개</p></div>`;
+  }).join('');
+}
+$('#typeBtns').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b){T=b.dataset.t;$('#err').textContent='';loadRows();renderInput(true)}});
+$('#catBtns').addEventListener('click',e=>{const b=e.target.closest('[data-ic]');if(b){IC=b.dataset.ic;$('#err').textContent='';renderInput(false)}});
+$('#loc').addEventListener('change',()=>{lastLoc=$('#loc').value;loadRows();drawItems()});
+$('#items').addEventListener('input',e=>{
+  const t=e.target,i=t.dataset.i;if(i===undefined||t.dataset.f!=='q')return;
+  R[i].q=t.value===''?'':+t.value;
+});
+$('#items').addEventListener('change',e=>{if(e.target.dataset.f==='p'){R[e.target.dataset.i].p=e.target.value;drawItems()}});
+$('#items').addEventListener('click',e=>{
+  const rm=e.target.closest('[data-rm]');
+  if(rm){R.splice(+rm.dataset.rm,1);drawItems()}
+});
+$('#addRow').addEventListener('click',()=>{R.push(newRow());drawItems()});
+$('#save').addEventListener('click',()=>{
   const err=$('#err');err.textContent='';
-  const loc=$('#hosp').value,d=$('#date').value,m=$('#memo').value.trim();
-  if(!loc)return err.textContent='병원이 없습니다. 관리자에게 병원 추가를 요청하세요';
-  if(!d)return err.textContent='날짜를 넣어 주세요';
-  for(let i=0;i<R.length;i++){if(!R[i].p)return err.textContent=`${i+1}번째 줄: 제품을 선택하세요`;if(!Number.isInteger(R[i].q)||R[i].q<1)return err.textContent=`${i+1}번째 줄: 수량을 1 이상 정수로 입력하세요`}
-  const g=ME.uid+'-'+Date.now(),name=MEDOC&&MEDOC.name||'';
-  const list=R.map((r,i)=>({g,i,t:T,loc,p:r.p,q:r.q,d,m,by:ME.uid,byName:name}));
-  $('#save').disabled=true;
-  try{await API.addTx(list);R=[newRow()];$('#memo').value='';renderInput();toast(`${locName(loc)} ${md(d)} ${T==='in'?'입고':'사용'} 저장`)}
-  catch(e2){err.textContent=errMsg(e2)}
-  $('#save').disabled=false;
+  const loc=$('#loc').value,m=$('#memo').value.trim(),ds=$('#dt').value||todayStr();
+  if(!loc)return err.textContent='병원을 선택하세요';
+  const g={};R.forEach(r=>{const n=Math.floor(+r.q||0);if(n>0&&r.p)g[r.p]=(g[r.p]||0)+n});
+  if(!Object.keys(g).length)return err.textContent='수량을 입력한 품목이 없어요';
+  if(T==='us'){const st=calc()[loc]||{};
+    for(const[p,n]of Object.entries(g)){const h=st[p+'|']||0;if(n>h)return err.textContent=`${prodName(p)}: ${locName(loc)} 재고 ${h}개 (입력 ${n}개)`}}
+  const out=Object.entries(g).map(([p,n])=>({p,lot:'',q:n}));
+  const dd=new Date(ds+'T12:00:00');
+  const at=(isNaN(dd)?new Date():dd).toISOString();
+  const base=Date.now()*1000+Math.floor(Math.random()*900);
+  out.forEach((o,i)=>{const x={id:base+i,t:T,p:o.p,lot:o.lot,q:o.q,at,m,by:ME.uid,byName:myName()};if(T==='in')x.to=loc;else x.from=loc;S.tx.push(x)});
+  lastLoc=loc;persist();$('#memo').value='';$('#dt').value=todayStr();
+  renderAll();toast(`${locName(loc)} · ${out.length}건 저장했어요`);
 });
 
-/* ---------- 기록 ---------- */
-let LT='us';
+/* ───── 사용량 ───── */
+let UP='m',UC='all';
+function renderUsage(){
+  $('#usePeriod').innerHTML=[['m','이번 달'],['p','지난 달'],['a','전체']].map(([id,n])=>`<button class="chip ${UP===id?'on':''}" data-up="${id}">${n}</button>`).join('');
+  $('#useCat').innerHTML=[['all','전체'],['pfa','PFA 병원'],['ep','EP 병원']].map(([id,n])=>`<button class="chip ${UC===id?'on':''}" data-uc="${id}">${n}</button>`).join('');
+  const cm=curMonth(),pm=prevMonth();
+  const ids=new Set(S.locs.filter(l=>catMatch(l,UC)).map(l=>l.id));
+  const us=S.tx.filter(x=>x.t==='us'&&ids.has(x.from)&&(UP==='a'||monthOf(x.at)===(UP==='m'?cm:pm)));
+  const byLoc={},byProd={};
+  us.forEach(x=>{
+    byLoc[x.from]=byLoc[x.from]||{};byLoc[x.from][x.p]=(byLoc[x.from][x.p]||0)+x.q;
+    byProd[x.p]=byProd[x.p]||{tot:0,l:{}};byProd[x.p].tot+=x.q;byProd[x.p].l[x.from]=(byProd[x.p].l[x.from]||0)+x.q;
+  });
+  const tot=us.reduce((s,x)=>s+x.q,0);
+  $('#useSum').innerHTML=`<div><b>${tot}</b><span>총 사용</span></div><div><b>${Object.keys(byLoc).length}</b><span>사용한 병원</span></div><div><b>${Object.keys(byProd).length}</b><span>사용한 제품</span></div>`;
+  let h='';
+  S.locs.filter(l=>byLoc[l.id]).forEach(l=>{
+    const rows=Object.entries(byLoc[l.id]).sort((a,b)=>prodIdx(a[0])-prodIdx(b[0]));
+    const t=rows.reduce((s,r)=>s+r[1],0);
+    h+=`<div class="card"><div class="loc"><span><b>${esc(l.name)}</b> ${locTags(l)}</span><span class="tag">사용 ${t}개</span></div><table><tr><th>제품</th><th class="n">사용</th></tr>${rows.map(([p,n])=>{const pp=prodOf(p);return `<tr><td>${esc(pp.name||'(삭제된 제품)')}${pp.grp?`<div class="sub2">${esc(pp.grp)}</div>`:''}</td><td class="n"><b>${n}</b></td></tr>`}).join('')}</table></div>`;
+  });
+  $('#useByLoc').innerHTML=h||'<div class="card empty">이 기간 사용 기록이 없어요</div>';
+  const pr=S.prods.filter(p=>byProd[p.id]);
+  $('#useByProd').innerHTML=pr.length?`<table><tr><th>제품</th><th class="n">사용 합계</th></tr>${pr.map(p=>`<tr><td>${esc(p.name)}${p.grp?`<div class="sub2">${esc(p.grp)}</div>`:''}<div class="sub2">${Object.entries(byProd[p.id].l).map(([l,n])=>esc(locName(l))+' '+n).join(' · ')}</div></td><td class="n"><b>${byProd[p.id].tot}</b></td></tr>`).join('')}</table>`:'<div class="empty">사용 기록 없음</div>';
+}
+$('#usePeriod').addEventListener('click',e=>{const b=e.target.closest('[data-up]');if(b){UP=b.dataset.up;renderUsage()}});
+$('#useCat').addEventListener('click',e=>{const b=e.target.closest('[data-uc]');if(b){UC=b.dataset.uc;renderUsage()}});
+
+/* ───── 기록 ───── */
+let LT='in';
 function renderLog(){
-  const name={in:'입고',us:'사용'},gs={},cnt={in:new Set(),us:new Set()};
-  TX.forEach(x=>{cnt[x.t].add(x.g);if(x.t===LT)(gs[x.g]=gs[x.g]||[]).push(x)});
-  document.querySelectorAll('#logType button').forEach(b=>{b.classList.toggle('on',b.dataset.lt===LT);b.textContent=`${name[b.dataset.lt]} ${cnt[b.dataset.lt].size}`});
-  const list=Object.values(gs).map(g=>g.sort((a,b)=>(a.i||0)-(b.i||0))).sort((a,b)=>b[0].d.localeCompare(a[0].d)||b[0].atMs-a[0].atMs);
-  $('#logTitle').textContent=`${name[LT]} 기록 ${list.length}건`;
-  $('#logList').innerHTML=list.length?list.map(g=>{const x=g[0],can=ADMIN||x.by===ME.uid;
-    return `<div class="grp"><div class="gh"><span>${locName(x.loc)} ${md(x.d)} (${wd(x.d)})</span>${can?`<button class="chip" data-del="${esc(x.g)}" style="font-size:11px;padding:2px 8px">삭제</button>`:''}</div>
-      <ul>${g.map(y=>`<li><span>${prodName(y.p)}</span><span class="${LT==='in'?'up':'dn'}">${LT==='in'?'+':'-'}${y.q}</span></li>`).join('')}</ul>${x.m?`<div class="memo">${esc(x.m)}</div>`:''}<div class="by">작성: ${esc(x.byName||'-')}</div></div>`}).join(''):'<div class="empty">기록이 없습니다</div>';
+  const name={in:'입고',us:'사용'},cnt={in:0,us:0};
+  S.tx.forEach(x=>{if(cnt[x.t]!==undefined)cnt[x.t]++});
+  document.querySelectorAll('#logType button').forEach(b=>{b.classList.toggle('on',b.dataset.lt===LT);b.textContent=`${name[b.dataset.lt]} ${cnt[b.dataset.lt]}`});
+  $('#logTitle').textContent=`${name[LT]} 기록`;
+  const list=S.tx.filter(x=>x.t===LT).sort((a,b)=>b.at.localeCompare(a.at)||b.id-a.id);
+  $('#logList').innerHTML=list.length?list.map(x=>{
+    const d=new Date(x.at),ds=`${d.getMonth()+1}/${d.getDate()}`;
+    const where=LT==='in'?x.to:x.from;
+    const can=ADMIN||!x.by||x.by===(ME&&ME.uid);
+    return `<div class="log"><div><span class="k ${LT}">${name[LT]}</span>${esc(prodName(x.p))}<small>${esc(locName(where))}${x.m?' · '+esc(x.m):''}</small><small class="by">작성: ${esc(x.byName||'-')}</small></div><div style="text-align:right"><b class="${LT==='us'?'dn':'up'}" style="font-size:15px;margin:0">${LT==='us'?'-':'+'}${x.q}</b><small>${ds}</small>${can?`<button class="chip sm" data-del="${x.id}" style="margin-top:4px">삭제</button>`:''}</div></div>`;
+  }).join(''):'<div class="empty">기록이 없어요</div>';
 }
 $('#logType').addEventListener('click',e=>{const b=e.target.closest('[data-lt]');if(b){LT=b.dataset.lt;renderLog()}});
-$('#logList').addEventListener('click',async e=>{
+$('#logList').addEventListener('click',e=>{
   const b=e.target.closest('[data-del]');if(!b)return;
-  if(!b.dataset.armed){b.dataset.armed=1;b.textContent='한 번 더';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='삭제'}},2500);return}
-  const ids=TX.filter(x=>x.g===b.dataset.del).map(x=>x._id);
-  try{await API.deleteTx(ids);toast('삭제했습니다')}catch(x){toast(errMsg(x))}
+  if(b.dataset.armed){DEL.add(String(b.dataset.del));S.tx=S.tx.filter(x=>String(x.id)!==b.dataset.del);persist();renderAll();toast('삭제했어요')}
+  else{b.dataset.armed=1;b.textContent='한 번 더';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent='삭제'}},2500)}
 });
 
-/* ---------- 설정 (관리자) ---------- */
-let ED=null; // {kind:'loc'|'prod'|'cat'|'user', id}
-const useCnt=(kind,id)=>TX.filter(x=>kind==='loc'?x.loc===id:x.p===id).length;
-function editRow(kind,id,val,extra=''){return `<div class="srow">${extra}<input id="edIn" value="${esc(val)}" style="flex:1"><button class="chip on" data-sv="${kind}|${esc(id)}">${kind==='cat'?'완료':'저장'}</button><button class="chip" data-cc="1">취소</button></div>`}
-function itemRow(kind,x){
-  if(ED&&ED.kind===kind&&ED.id===x.id)return editRow(kind,x.id,x.name,kind==='prod'?`<input id="edCat" list="catList" value="${esc(x.cat||'')}" placeholder="묶음" style="width:90px">`:'');
-  return `<div class="srow"><span style="flex:1">${esc(x.name)}<small style="display:block;color:var(--sub);font-size:11px">기록 ${useCnt(kind,x.id)}줄</small></span><button class="chip" data-ed="${kind}|${x.id}">수정</button><button class="chip del" data-dl="${kind}|${x.id}">삭제</button></div>`;
-}
-function renderSet(){
-  $('#setTab').classList.toggle('hide',!ADMIN);
+/* ───── 직원 (관리자) ───── */
+let EDU=null;
+function renderUsers(){
   if(!ADMIN)return;
-  const us=[...USERS].sort((a,b)=>(a.approved?1:0)-(b.approved?1:0)||String(a.name).localeCompare(String(b.name)));
+  const us=[...USERS].sort((a,b)=>(a.approved||isAdminEmail(a.email)?1:0)-(b.approved||isAdminEmail(b.email)?1:0)||String(a.name).localeCompare(String(b.name)));
   $('#userSet').innerHTML=us.length?us.map(u=>{
-    const adm=ADMIN_EMAILS.map(x=>x.toLowerCase()).includes(String(u.email).toLowerCase());
-    if(ED&&ED.kind==='user'&&ED.id===u.uid)return editRow('user',u.uid,u.name);
-    return `<div class="srow"><span style="flex:1">${esc(u.name)}${adm?'<span class="badge admin">관리자</span>':u.approved?'':'<span class="badge wait">승인 대기</span>'}<small style="display:block;color:var(--sub);font-size:11px">${esc(u.email)}</small></span>
-      <button class="chip" data-ed="user|${u.uid}">이름</button>${adm?'':u.approved?`<button class="chip del" data-ua="${u.uid}|0">승인 해제</button>`:`<button class="chip on" data-ua="${u.uid}|1">승인</button><button class="chip del" data-ud="${u.uid}">거절</button>`}</div>`}).join(''):'<div class="empty">가입한 직원이 없습니다</div>';
-  $('#locSet').innerHTML=S.locs.map(l=>itemRow('loc',l)).join('')||'<div class="empty">병원이 없습니다</div>';
-  $('#prodSet').innerHTML=cats().map(c=>(ED&&ED.kind==='cat'&&ED.id===c?`<div style="margin-top:12px">${editRow('cat',c,c)}</div>`:`<div class="cathead"><span class="catname" data-ed="cat|${esc(c)}" title="눌러서 이름 수정">${esc(c)} <small>✎</small></span>${S.prods.some(p=>(p.cat||'기타')===c)?'':`<button class="chip del" data-cdel="${esc(c)}">빈 묶음 삭제</button>`}</div>`)+S.prods.filter(p=>(p.cat||'기타')===c).map(p=>itemRow('prod',p)).join('')).join('')||'<div class="empty">제품이 없습니다</div>';
-  $('#catList').innerHTML=cats().map(c=>`<option value="${esc(c)}">`).join('');
-  const inp=$('#edIn');if(inp&&document.activeElement!==inp&&!$('#edCat')?.matches(':focus')){inp.focus()}
+    const adm=isAdminEmail(u.email);
+    if(EDU===u.uid)return `<div class="srow"><input id="edU" value="${esc(u.name)}" style="flex:1"><button class="chip sm on" data-usv="${u.uid}">저장</button><button class="chip sm" data-ucc="1">취소</button></div>`;
+    return `<div class="srow"><div><span>${esc(u.name)}</span>${adm?'<span class="badge admin">관리자</span>':u.approved?'':'<span class="badge wait">승인 대기</span>'}<div class="sub2">${esc(u.email)}</div></div>
+      <div class="l"><button class="chip sm" data-ued="${u.uid}">이름</button>${adm?'':u.approved?`<button class="chip sm" data-ua="${u.uid}|0">승인 해제</button>`:`<button class="chip sm on" data-ua="${u.uid}|1">승인</button><button class="chip sm" data-ud="${u.uid}">거절</button>`}</div></div>`}).join(''):'<div class="empty">가입한 직원이 없어요</div>';
 }
-async function saveEdit(kind,id){
-  const v=$('#edIn').value.trim();if(!v)return toast('이름을 입력하세요');
-  if(kind==='user'){try{await API.updateUser(id,{name:v});ED=null;toast('수정했습니다');renderSet()}catch(e){toast(errMsg(e))}return}
-  const next=clone(CAT);
-  if(kind==='cat'){if(v!==id&&cats().includes(v))return toast('같은 묶음 이름이 이미 있습니다');next.prods.forEach(p=>{if((p.cat||'기타')===id)p.cat=v});next.cats=cats().map(c=>c===id?v:c)}
-  else{const list=kind==='loc'?next.locs:next.prods;if(list.some(x=>x.id!==id&&x.name===v))return toast('같은 이름이 이미 있습니다');const it=list.find(x=>x.id===id);it.name=v;
-    if(kind==='prod'){const c=$('#edCat').value.trim();if(!c)return toast('묶음 이름을 입력하세요');it.cat=c}}
-  if(await saveCat(next,'수정했습니다')){ED=null;renderSet()}
-}
-$('#set').addEventListener('click',async e=>{
-  const ed=e.target.closest('[data-ed]'),sv=e.target.closest('[data-sv]'),dl=e.target.closest('[data-dl]'),ua=e.target.closest('[data-ua]'),ud=e.target.closest('[data-ud]');
-  if(ed){const k=ed.dataset.ed.indexOf('|');ED={kind:ed.dataset.ed.slice(0,k),id:ed.dataset.ed.slice(k+1)};renderSet();return}
-  if(sv){const k=sv.dataset.sv.indexOf('|');return saveEdit(sv.dataset.sv.slice(0,k),sv.dataset.sv.slice(k+1))}
-  if(e.target.closest('[data-cc]')){ED=null;renderSet();return}
-  if(ua){const[uid,v]=ua.dataset.ua.split('|');try{await API.updateUser(uid,{approved:v==='1'});toast(v==='1'?'승인했습니다':'승인을 해제했습니다')}catch(x){toast(errMsg(x))}return}
-  if(ud){if(!ud.dataset.armed){ud.dataset.armed=1;ud.textContent='한 번 더';setTimeout(()=>{if(ud.isConnected){delete ud.dataset.armed;ud.textContent='거절'}},2500);return}
-    try{await API.deleteUser(ud.dataset.ud);toast('가입 신청을 거절했습니다')}catch(x){toast(errMsg(x))}return}
-  const cd=e.target.closest('[data-cdel]');
-  if(cd){if(!cd.dataset.armed){cd.dataset.armed=1;cd.textContent='한 번 더';setTimeout(()=>{if(cd.isConnected){delete cd.dataset.armed;cd.textContent='빈 묶음 삭제'}},2500);return}
-    const n=clone(CAT);n.cats=cats().filter(c=>c!==cd.dataset.cdel);await saveCat(n,'묶음을 삭제했습니다');return}
-  if(dl){
-    const[k,id]=dl.dataset.dl.split('|'),n=useCnt(k,id);
-    if(n)return toast(`기록이 ${n}줄 있어서 삭제할 수 없습니다. 이름 수정만 가능합니다`);
-    if(!dl.dataset.armed){dl.dataset.armed=1;dl.textContent='한 번 더 누르면 삭제';setTimeout(()=>{if(dl.isConnected){delete dl.dataset.armed;dl.textContent='삭제'}},3000);return}
-    const next=clone(CAT);if(k==='loc'){next.locs=next.locs.filter(x=>x.id!==id);if(locF===id)locF='all'}else next.prods=next.prods.filter(x=>x.id!==id);
-    await saveCat(next,'삭제했습니다');
-  }
+$('#userSet').addEventListener('click',async e=>{
+  const ed=e.target.closest('[data-ued]'),sv=e.target.closest('[data-usv]'),ua=e.target.closest('[data-ua]'),ud=e.target.closest('[data-ud]');
+  if(ed){EDU=ed.dataset.ued;renderUsers();const i=$('#edU');if(i)i.focus();return}
+  if(e.target.closest('[data-ucc]')){EDU=null;renderUsers();return}
+  if(sv){const v=$('#edU').value.trim();if(!v)return toast('이름을 입력하세요');try{await API.updateUser(sv.dataset.usv,{name:v});EDU=null;toast('수정했어요')}catch(x){toast(errMsg(x))}return}
+  if(ua){const[uid,v]=ua.dataset.ua.split('|');try{await API.updateUser(uid,{approved:v==='1'});toast(v==='1'?'승인했어요':'승인을 해제했어요')}catch(x){toast(errMsg(x))}return}
+  if(ud){armDel(ud,async()=>{try{await API.deleteUser(ud.dataset.ud);toast('가입 신청을 거절했어요')}catch(x){toast(errMsg(x))}})}
 });
-$('#set').addEventListener('keydown',e=>{if(e.target.id==='edIn'){if(e.key==='Enter'){const b=$('[data-sv]');if(b)b.click()}if(e.key==='Escape'){ED=null;renderSet()}}});
-$('#addGroup').onclick=async()=>{const v=$('#newGroup').value.trim();if(!v)return toast('묶음 이름을 입력하세요');if(cats().includes(v))return toast('같은 묶음 이름이 이미 있습니다');const n=clone(CAT);n.cats=[...cats(),v];if(await saveCat(n,'묶음을 추가했습니다')){$('#newGroup').value='';$('#newCat').value=v}};
-$('#newGroup').addEventListener('keydown',e=>{if(e.key==='Enter')$('#addGroup').click()});
-$('#addLoc').onclick=async()=>{const v=$('#newLoc').value.trim();if(!v)return;if(S.locs.some(x=>x.name===v))return toast('같은 이름이 이미 있습니다');const n=clone(CAT);n.locs.push({id:newId('h'),name:v});if(await saveCat(n,'병원을 추가했습니다'))$('#newLoc').value=''};
-$('#addProd').onclick=async()=>{const v=$('#newProd').value.trim(),c=$('#newCat').value.trim();if(!c)return toast('묶음 이름을 입력하세요');if(!v)return toast('제품명을 입력하세요');if(S.prods.some(x=>x.name===v))return toast('같은 이름이 이미 있습니다');const n=clone(CAT);n.prods.push({id:newId('p'),name:v,cat:c});if(await saveCat(n,'제품을 추가했습니다'))$('#newProd').value=''};
 
-/* ---------- 탭 ---------- */
-$('nav').addEventListener('click',e=>{
+/* ───── 설정 ───── */
+const openLocs=new Set();
+function renderSet(){
+  const groups=[];S.prods.forEach(p=>{const g=pGroup(p);if(!groups.includes(g))groups.push(g)});
+  $('#locSet').innerHTML=S.locs.map(l=>{
+    const its=new Set(l.items||[]);
+    return `<div style="border-bottom:1px solid var(--line);padding:8px 0"><div class="srow" style="border:0;padding:0"><div class="l"><span>${esc(l.name)}</span><button class="chip sm ${l.pfa?'on':''}" data-tg="${l.id}|pfa">PFA</button><button class="chip sm ${l.ep?'on':''}" data-tg="${l.id}|ep">EP</button></div><button class="chip sm" data-dl="${l.id}">삭제</button></div>
+    <details data-dt="${l.id}" ${openLocs.has(l.id)?'open':''} style="margin-top:6px"><summary style="font-size:13px;color:var(--pri);cursor:pointer;padding:4px 0">품목 ${its.size}개 선택됨 (눌러서 수정)</summary>
+    <div class="row" style="margin:8px 0"><button class="chip sm" data-set="${l.id}|2">PFA 2D 세트</button><button class="chip sm" data-set="${l.id}|3">PFA 3D 세트</button><button class="chip sm" data-set="${l.id}|0">모두 해제</button></div>
+    ${groups.map(g=>`<div class="grp">${esc(g)}</div>`+S.prods.filter(p=>pGroup(p)===g).map(p=>`<label class="ck" style="margin:4px 12px 4px 0"><input type="checkbox" data-it="${l.id}|${p.id}" ${its.has(p.id)?'checked':''}> ${esc(p.name)}</label>`).join('')).join('')}
+    </details></div>`}).join('');
+  let h='',last='';
+  S.prods.forEach(p=>{const g=pGroup(p);
+    if(g!==last){h+=`<div class="grp">${esc(g)}${NOTES[p.grp]?` <span style="font-weight:400">· ${esc(NOTES[p.grp])}</span>`:''}</div>`;last=g}
+    h+=`<div class="srow"><span>${esc(p.name)}</span><button class="chip sm" data-dp="${p.id}">삭제</button></div>`});
+  $('#prodSet').innerHTML=h;
+  $('#grpList').innerHTML=[...new Set(S.prods.filter(p=>p.cat==='jc'&&p.grp).map(p=>p.grp))].map(g=>`<option value="${esc(g)}">`).join('');
+  $('#grpWrap').classList.toggle('hide',$('#newCat').value!=='jc');
+}
+function armDel(b,fn){
+  if(b.dataset.armed){fn()}else{b.dataset.armed=1;const o=b.textContent;b.textContent='한 번 더';setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=o}},2500)}
+}
+$('#newCat').addEventListener('change',renderSet);
+$('#locSet').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.dt){d.open?openLocs.add(d.dataset.dt):openLocs.delete(d.dataset.dt)}},true);
+$('#locSet').addEventListener('change',e=>{const c=e.target.closest('[data-it]');if(!c)return;
+  const[id,pid]=c.dataset.it.split('|');const l=S.locs.find(x=>x.id===id);if(!l)return;
+  const its=new Set(l.items||[]);c.checked?its.add(pid):its.delete(pid);l.items=[...its];openLocs.add(id);persist();renderAll()});
+$('#locSet').addEventListener('click',e=>{
+  const t=e.target.closest('[data-tg]');
+  if(t){const[id,f]=t.dataset.tg.split('|');const l=S.locs.find(x=>x.id===id);if(l){l[f]=l[f]?0:1;persist();renderAll()}return}
+  const st=e.target.closest('[data-set]');
+  if(st){const[id,k]=st.dataset.set.split('|');const l=S.locs.find(x=>x.id===id);
+    if(l){const names=k==='2'?SET2:k==='3'?SET3:[];l.items=names.map(n=>(S.prods.find(p=>p.name===n&&p.cat==='bs')||{}).id).filter(Boolean);openLocs.add(id);persist();renderAll()}return}
+  const b=e.target.closest('[data-dl]');if(!b)return;const id=b.dataset.dl;
+  armDel(b,()=>{if(S.tx.some(x=>x.from===id||x.to===id))return toast('기록이 있는 병원은 삭제할 수 없어요');S.locs=S.locs.filter(l=>l.id!==id);persist();renderAll();toast('삭제했어요')})});
+$('#prodSet').addEventListener('click',e=>{const b=e.target.closest('[data-dp]');if(!b)return;const id=b.dataset.dp;
+  armDel(b,()=>{if(S.tx.some(x=>x.p===id))return toast('기록이 있는 제품은 삭제할 수 없어요');S.prods=S.prods.filter(p=>p.id!==id);S.locs.forEach(l=>{l.items=(l.items||[]).filter(x=>x!==id)});persist();renderAll();toast('삭제했어요')})});
+$('#addLoc').addEventListener('click',()=>{const v=$('#newLoc').value.trim();if(!v)return;S.locs.push({id:'h'+Date.now(),name:v,kind:'hp',pfa:$('#newPfa').checked?1:0,ep:$('#newEp').checked?1:0});$('#newLoc').value='';persist();renderAll();toast('병원을 추가했어요')});
+$('#addProd').addEventListener('click',()=>{const v=$('#newProd').value.trim();if(!v)return;const cat=$('#newCat').value;S.prods.push({id:'p'+Date.now(),name:v,cat,grp:cat==='jc'?$('#newGrp').value.trim():''});$('#newProd').value='';R=[];persist();renderAll();toast('제품을 추가했어요')});
+$('#exp').addEventListener('click',()=>{$('#bk').value=JSON.stringify(S)});
+$('#cp').addEventListener('click',async()=>{const t=$('#bk');if(!t.value)t.value=JSON.stringify(S);t.select();try{await navigator.clipboard.writeText(t.value);toast('복사했어요')}catch(e){toast('길게 눌러서 직접 복사해 주세요')}});
+$('#imp').addEventListener('click',e=>{
+  if(!ADMIN)return;
+  const b=e.target;let d;
+  try{d=JSON.parse($('#bk').value)}catch(x){return toast('백업 내용이 올바르지 않아요')}
+  if(!d||!Array.isArray(d.locs)||!Array.isArray(d.prods)||!Array.isArray(d.tx))return toast('백업 내용이 올바르지 않아요');
+  armDel(b,()=>{const ntx=d.tx.filter(x=>x.t==='in'||x.t==='us');markRemoved(ntx);S={locs:d.locs.filter(l=>l.kind!=='co'),prods:d.prods,tx:ntx};R=[];persist();renderAll();toast('가져왔어요')});
+});
+$('#reset').addEventListener('click',e=>{
+  if(!ADMIN)return;
+  const b=e.target;
+  if(b.dataset.armed){markRemoved([]);S=sample();R=[];persist();renderAll();b.textContent='처음 상태로 되돌리기';delete b.dataset.armed;toast('되돌렸어요')}
+  else{b.dataset.armed=1;b.textContent='모든 직원의 입력 내용이 지워져요. 한 번 더 누르세요';setTimeout(()=>{delete b.dataset.armed;b.textContent='처음 상태로 되돌리기'},3500)}
+});
+
+/* ───── 탭 ───── */
+$('#tabs').addEventListener('click',e=>{
   const b=e.target.closest('[data-tab]');if(!b)return;
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
   document.querySelectorAll('main>section').forEach(s=>s.classList.toggle('hide',s.id!==b.dataset.tab));
+  if(b.dataset.tab==='input'&&!R.some(r=>(+r.q||0)>0))renderInput(false);
   window.scrollTo(0,0);
 });
-function renderAll(){renderStat();renderInput();renderLog();renderSet()}
+function renderAll(){renderStock();renderInput();renderUsage();renderLog();renderSet();renderUsers()}
 
-/* ---------- 시작 ---------- */
+/* ───── 시작 ───── */
 (async()=>{
-  if(window.__MOCK_API__){API=window.__MOCK_API__;start();return}
-  if(!firebaseConfig.apiKey){show('vSetup');return}
-  try{API=await firebaseAPI();start()}catch(e){console.error(e);$('#vSetup .hint').textContent='Firebase에 연결하지 못했습니다: '+(e.message||e);show('vSetup')}
+  setSync('local');
+  if(window.__MOCK_API__){API=window.__MOCK_API__;startAuth();return}
+  try{API=await firebaseAPI();startAuth()}
+  catch(e){console.error(e);$('#setupMsg').textContent='서버에 연결하지 못했습니다: '+(e.message||e);show('vSetup')}
 })();
 </script>
 </body>
